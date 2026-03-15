@@ -30,10 +30,6 @@ window-padding-balance = true
 # Show native window decorations (title bar, close/minimize buttons).
 window-decoration = true
 
-# On macOS, use a transparent title bar that blends into the terminal
-# background instead of the default gray bar.
-macos-titlebar-style = "transparent"
-
 # Minimum contrast ratio between foreground and background colors.
 # Ghostty will automatically lighten or darken text that falls below
 # this threshold. 1.0 = off, 4.5 = WCAG AA standard. 1.5 is a gentle
@@ -98,23 +94,58 @@ confirm-close-surface = false
 # relatively subdued default colors.
 bold-is-bright = true
 
-# Treat the macOS Option key as Alt. Required for terminal programs
-# that use Alt keybinds (Neovim <A-j>, tmux, readline's Meta key).
-# Trade-off: you lose macOS special character input (e.g. Option+3
-# for # on non-US keyboards).
-macos-option-as-alt = true
-
-# On Linux with a Wayland compositor, show client-side decorations
-# (title bar drawn by Ghostty itself). Ensures a consistent look
-# across different Linux desktop environments.
-linux-csd-titlebar = true
-
 # Hide the mouse cursor while you type. It reappears the moment you
 # move the mouse. Reduces visual clutter during keyboard-heavy work.
 mouse-hide-while-typing = true
 
 # Auto-update channel. "stable" checks for new stable releases only.
 auto-update-channel = stable
+
+
+# ----------------------------------------------------------------------
+#  PLATFORM-SPECIFIC SETTINGS
+#
+#  These settings only apply to a specific operating system. Ghostty
+#  silently ignores settings that don't match the current OS, BUT
+#  having both active can make it confusing when debugging.
+#
+#  CONVENTION USED IN THIS FILE:
+#    #   = explanatory comment (documentation, notes, context)
+#    #!  = toggled-off setting (uncomment to activate on that platform)
+#
+#  When moving to a new machine:
+#    1. Uncomment (#! -> remove #!) the settings for your current OS
+#    2. Comment out (add #!) the settings for the other OS
+# ----------------------------------------------------------------------
+
+# -- macOS (active) --
+#  These are currently ENABLED. Comment them out with #! on Linux.
+
+# Title bar style: "transparent" blends the title bar into the terminal
+# background color instead of showing the default macOS gray system bar.
+# Other options: "native" (default macOS chrome), "hidden" (no bar at all).
+macos-titlebar-style = "transparent"
+
+# Treat the Option key as Alt. This is essential for terminal programs
+# that rely on Alt keybinds: Neovim (<A-j>), tmux (M- prefixed binds),
+# readline/bash (Meta key for word-jump, etc.).
+#
+# Trade-off: you lose macOS special character input via Option
+# (e.g. Option+3 = # on British keyboards, Option+e = accent marks).
+# If you need those characters, set this to false and use Esc as Alt
+# instead (most terminals treat Esc as a Meta/Alt prefix).
+macos-option-as-alt = true
+
+# -- Linux (inactive) --
+#  These are currently DISABLED. Remove the #! prefix to activate on Linux.
+
+# Client-side decorations on Wayland. When true, Ghostty draws its own
+# title bar instead of relying on the window manager/compositor.
+# Why you'd want this: some Wayland compositors (e.g. Sway, Hyprland)
+# don't draw server-side title bars at all, so without CSD you get no
+# title bar. Even on GNOME/KDE, CSD ensures a consistent Ghostty look.
+# On X11 this setting has no effect -- X11 always uses server-side decorations.
+#! linux-csd-titlebar = true
 
 
 # ----------------------------------------------------------------------
