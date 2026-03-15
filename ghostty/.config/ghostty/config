@@ -1,0 +1,43 @@
+# Ghostty configuration
+
+# Theme & appearance
+theme = "TokyoNight"
+background-opacity = 0.95
+window-padding-x = 12
+window-padding-y = 10
+window-decoration = true
+macos-titlebar-style = "transparent"
+minimum-contrast = 1.2
+
+# Fonts
+font-family = "Cascadia Cove Nerd Mono"
+font-size = 13
+font-feature = "liga"
+
+# Cursor
+cursor-style = bar
+cursor-color = cell-foreground
+
+# Behavior
+scrollback-limit = 50000000
+
+auto-update-channel = stable
+
+# Clipboard
+clipboard-trim-trailing-spaces = true
+clipboard-paste-protection = true
+selection-clear-on-copy = false
+
+# Performance
+
+# Key bindings (Mac)
+keybind = "cmd+shift+c=copy_to_clipboard"
+keybind = "cmd+shift+v=paste_from_clipboard"
+keybind = "cmd+shift+w=close_window"
+keybind = "cmd+shift+n=new_window"
+keybind = "cmd+shift+t=new_tab"
+keybind = "cmd+shift+right=next_tab"
+keybind = "cmd+shift+left=previous_tab"
+
+# Shell integration
+shell-integration = detect
