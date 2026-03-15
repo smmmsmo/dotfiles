@@ -161,6 +161,19 @@ alias dkrmi='docker rmi'
 alias dkprune='docker system prune -af --volumes'
 
 # ══════════════════════════════════════════════════════════════════
+# Tmux Aliases
+# ══════════════════════════════════════════════════════════════════
+# Short aliases for session management. `t` with no args lists
+# sessions. `ta` attaches (or creates) a named session. `tks`
+# kills a specific session, `tka` kills the entire server.
+alias t='tmux ls 2>/dev/null || echo "no sessions"'
+alias ta='tmux new-session -A -s'    # attach or create: ta work
+alias td='tmux detach'
+alias tks='tmux kill-session -t'     # kill one: tks work
+alias tka='tmux kill-server'         # kill everything
+alias tmuxrc='${EDITOR} ~/.config/tmux/tmux.conf'
+
+# ══════════════════════════════════════════════════════════════════
 # Node / npm Aliases
 # ══════════════════════════════════════════════════════════════════
 alias ni='npm install'
