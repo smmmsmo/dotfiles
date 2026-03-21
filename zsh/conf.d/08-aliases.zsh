@@ -32,17 +32,13 @@ for i in {1..9}; do alias "$i"="cd +$i"; done  # 1-9 to jump dir stack
 # and tree view. --group-directories-first keeps dirs at the top.
 # Install: brew install eza
 if command -v eza &>/dev/null; then
-  alias ls='eza --icons --group-directories-first --color=always'
-  alias l='eza --icons --group-directories-first -1'
-  alias ll='eza --icons --group-directories-first -lah --git'
-  alias la='eza --icons --group-directories-first -lah --git -a'
-  alias lt='eza --icons --group-directories-first --tree --level=2'
-  alias ltt='eza --icons --group-directories-first --tree --level=3'
-  alias lttt='eza --icons --group-directories-first --tree --level=4'
+  alias ls='eza -lh --group-directories-first --icons=auto'
+  alias lsa='ls -a'
+  alias lt='eza --tree --level=2 --long --icons --git'
+  alias lta='lt -a'
 else
-  alias ls='ls --color=auto'
-  alias ll='ls -lah'
-  alias la='ls -lAh'
+  alias ls='ls -lh --color=auto'
+  alias lsa='ls -lah'
   alias l='ls -CF'
 fi
 
