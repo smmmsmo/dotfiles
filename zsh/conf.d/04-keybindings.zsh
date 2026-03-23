@@ -32,6 +32,20 @@
 
 bindkey -e   # emacs mode
 
+# If the command line is empty, make Tab complete local files/directories
+# instead of listing every command on PATH. Otherwise keep normal zsh
+# completion behavior.
+zle -C complete-local-files complete-word _files
+_tab_complete_smart() {
+  if [[ -z $BUFFER ]]; then
+    zle complete-local-files
+  else
+    zle expand-or-complete
+  fi
+}
+zle -N _tab_complete_smart
+bindkey '^I' _tab_complete_smart
+
 # ── Word navigation ──────────────────────────────────────────────
 # Ctrl+Arrow keys (terminal-dependent escape codes)
 bindkey '^[[1;5C' forward-word     # Ctrl-Right

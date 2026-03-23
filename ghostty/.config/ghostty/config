@@ -17,6 +17,14 @@ theme = "TokyoNight"
 # without sacrificing readability.
 background-opacity = 0.95
 
+# Slightly blur whatever shows through the transparent background. This
+# usually looks cleaner than raw transparency, especially on macOS.
+background-blur = true
+
+# Apply the same background opacity to cells with explicit background
+# colors so full-screen apps like Neovim and tmux still feel translucent.
+background-opacity-cells = true
+
 # Padding (in pixels) between the terminal content and the window edge.
 # Gives the text some breathing room so it doesn't hug the borders.
 window-padding-x = 12
@@ -34,7 +42,7 @@ window-decoration = true
 # Ghostty will automatically lighten or darken text that falls below
 # this threshold. 1.0 = off, 4.5 = WCAG AA standard. 1.5 is a gentle
 # bump that helps with very dim colors without washing out the palette.
-minimum-contrast = 1.5
+# minimum-contrast = 1.5
 
 # Hides the size overlay that appears in the center of the terminal
 # while you drag-resize the window. Set to "never" for a cleaner look.
@@ -213,3 +221,14 @@ keybind = ctrl+shift+comma=reload_config
 # fish) and inject its shell integration script. This enables features
 # like semantic prompts, clickable URLs, and cursor shape changes.
 shell-integration = detect
+
+# Allow clicking within shell prompts to move the cursor. Works best when
+# shell integration or OSC 133 prompt markers are active.
+cursor-click-to-move = true
+
+# Notify when long-running commands complete in an unfocused surface.
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = notify
+
+# Keep a zoomed split zoomed while navigating between panes.
+split-preserve-zoom = navigation

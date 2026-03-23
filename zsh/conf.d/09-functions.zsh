@@ -21,9 +21,27 @@
 
 # ── File & directory utilities ───────────────────────────────────
 
+# n — open Neovim in the current directory when called without args
+n() {
+  if [[ $# -eq 0 ]]; then
+    command nvim .
+  else
+    command nvim "$@"
+  fi
+}
+
 # mkcd — mkdir and cd in one step
 # Usage: mkcd my-new-project
 mkcd() { mkdir -p -- "$1" && cd -- "$1" }
+
+# compress — create a .tar.gz archive from a file or directory
+# Usage: compress my-folder
+compress() {
+  tar -czf "${1%/}.tar.gz" "${1%/}"
+}
+
+# Convenience alias for extracting tar.gz archives.
+alias decompress="tar -xzf"
 
 # extract — universal archive extractor
 # Handles every common archive format. No need to remember which
@@ -126,6 +144,13 @@ fenv() {
   env | sort | fzf --prompt='> ' --preview='echo {}'
 }
 
+# eff — pick a file with fzf, then open it in $EDITOR
+eff() {
+  local file
+  file="$(ff)"
+  [[ -n "$file" ]] && "$EDITOR" "$file"
+}
+
 # ── Git helpers ──────────────────────────────────────────────────
 
 # gbr — fzf-powered git branch switcher
@@ -195,6 +220,221 @@ json() {
 # Usage: cheat tar
 # Usage: cheat python/list
 cheat() { curl -s "cheat.sh/$1" | ${PAGER:-less} }
+
+# iso2sd — write an ISO image to an SD card / USB drive
+iso2sd() {
+  if (( $# < 1 )); then
+    echo 'Usage: iso2sd <input_file> [output_device]'
+    echo "Example: iso2sd ~/Downloads/ubuntu.iso /dev/sda"
+    return 1
+  fi
+  local iso="$1" drive="$2"
+  if [[ -z $drive ]]; then
+    local available_sds
+    available_sds=$(lsblk -dpno NAME | grep -E '/dev/sd')
+    [[ -z $available_sds ]] && { echo "No SD drives found"; return 1; }
+    drive=$(omarchy-drive-select "$available_sds")
+    [[ -z $drive ]] && { echo "No drive selected"; return 1; }
+  fi
+  sudo dd bs=4M status=progress oflag=sync if="$iso" of="$drive"
+  sudo eject "$drive"
+}
+
+# format-drive — wipe and format an entire drive as exFAT
+format-drive() {
+  if (( $# != 2 )); then
+    echo 'Usage: format-drive <device> <name>'
+    echo "Example: format-drive /dev/sda 'My Stuff'"
+    return 1
+  fi
+  echo "WARNING: This will completely erase all data on $1 and label it '$2'."
+  read -rq "confirm?Are you sure? (y/N): "
+  echo
+  [[ $confirm =~ ^[Yy]$ ]] || return 1
+  sudo wipefs -a "$1"
+  sudo dd if=/dev/zero of="$1" bs=1M count=100 status=progress
+  sudo parted -s "$1" mklabel gpt
+  sudo parted -s "$1" mkpart primary 1MiB 100%
+  sudo parted -s "$1" set 1 msftdata on
+  local partition="$([[ $1 == *nvme* ]] && echo "${1}p1" || echo "${1}1")"
+  sudo partprobe "$1" || true
+  sudo udevadm settle || true
+  sudo mkfs.exfat -n "$2" "$partition"
+  echo "Drive $1 formatted as exFAT and labeled '$2'."
+}
+
+# fip — forward ports from a remote host to localhost
+fip() {
+  (( $# < 2 )) && { echo 'Usage: fip <host> <port1> [port2] ...'; return 1; }
+  local host="$1"
+  shift
+  for port in "$@"; do
+    ssh -f -N -L "$port:localhost:$port" "$host" && echo "Forwarding localhost:$port -> $host:$port"
+  done
+}
+
+# dip — disconnect/stop port forwarding
+dip() {
+  (( $# == 0 )) && { echo 'Usage: dip <port1> [port2] ...'; return 1; }
+  for port in "$@"; do
+    pkill -f "ssh.*-L $port:localhost:$port" && echo "Stopped forwarding port $port" || echo "No forwarding on port $port"
+  done
+}
+
+# lip — list active port forwards
+lip() {
+  pgrep -af "ssh.*-L [0-9]+:localhost:[0-9]+" || echo "No active forwards"
+}
+
+# transcode-video-1080p — downscale video to 1080p using H.264
+transcode-video-1080p() {
+  ffmpeg -i "$1" -vf scale=1920:1080 -c:v libx264 -preset fast -crf 23 -c:a copy "${1%.*}-1080p.mp4"
+}
+
+# transcode-video-4K — optimize 4K video using H.265
+transcode-video-4K() {
+  ffmpeg -i "$1" -c:v libx265 -preset slow -crf 24 -c:a aac -b:a 192k "${1%.*}-optimized.mp4"
+}
+
+# img2jpg — convert image to high-quality JPG
+img2jpg() {
+  local img="$1"
+  shift
+  magick "$img" "$@" -quality 95 -strip "${img%.*}-converted.jpg"
+}
+
+# img2jpg-small — convert and resize to max 1080px width
+img2jpg-small() {
+  local img="$1"
+  shift
+  magick "$img" "$@" -resize 1080x\> -quality 95 -strip "${img%.*}-small.jpg"
+}
+
+# img2jpg-medium — convert and resize to max 1800px width
+img2jpg-medium() {
+  local img="$1"
+  shift
+  magick "$img" "$@" -resize 1800x\> -quality 95 -strip "${img%.*}-medium.jpg"
+}
+
+# img2png — optimize PNG with maximum compression
+img2png() {
+  local img="$1"
+  shift
+  magick "$img" "$@" -strip \
+    -define png:compression-filter=5 \
+    -define png:compression-level=9 \
+    -define png:compression-strategy=1 \
+    -define png:exclude-chunk=all \
+    "${img%.*}-optimized.png"
+}
+
+# gwa — create a new worktree + branch from current repo
+gwa() {
+  [[ -z "$1" ]] && { echo 'Usage: gwa <branch-name>'; return 1; }
+  local branch="$1"
+  local base="$(basename "$PWD")"
+  local path="../${base}--${branch}"
+  git worktree add -b "$branch" "$path"
+  command -v mise &>/dev/null && mise trust "$path"
+  cd "$path"
+}
+
+# gwd — remove the current worktree and its branch
+gwd() {
+  if ! command -v gum &>/dev/null; then
+    echo "gd requires 'gum' for confirmation. Install: brew install gum"
+    return 1
+  fi
+  if gum confirm "Remove worktree and branch?"; then
+    local cwd="$(pwd)" worktree root branch
+    worktree="$(basename "$cwd")"
+    root="${worktree%%--*}"
+    branch="${worktree#*--}"
+    if [[ "$root" != "$worktree" ]]; then
+      cd "../$root"
+      git worktree remove "$cwd" --force || return 1
+      git branch -D "$branch"
+    else
+      echo "Not in a worktree (no '--' in directory name)"
+    fi
+  fi
+}
+
+# tdl — Tmux Dev Layout: opens nvim on the left, AI on the right
+tdl() {
+  [[ -z $1 ]] && { echo 'Usage: tdl <c|cx|codex|other_ai> [<second_ai>]'; return 1; }
+  [[ -z $TMUX ]] && { echo "You must be inside tmux to use tdl."; return 1; }
+
+  local current_dir="$PWD"
+  local editor_pane ai_pane ai2_pane
+  local ai="$1" ai2="$2"
+
+  editor_pane="$TMUX_PANE"
+  tmux rename-window -t "$editor_pane" "$(basename "$current_dir")"
+  tmux split-window -v -p 15 -t "$editor_pane" -c "$current_dir"
+  ai_pane=$(tmux split-window -h -p 30 -t "$editor_pane" -c "$current_dir" -P -F '#{pane_id}')
+
+  if [[ -n $ai2 ]]; then
+    ai2_pane=$(tmux split-window -v -t "$ai_pane" -c "$current_dir" -P -F '#{pane_id}')
+    tmux send-keys -t "$ai2_pane" "$ai2" C-m
+  fi
+
+  tmux send-keys -t "$ai_pane" "$ai" C-m
+  tmux send-keys -t "$editor_pane" "$EDITOR ." C-m
+  tmux select-pane -t "$editor_pane"
+}
+
+# tdlm — Tmux multi-project layout: one tdl window per subdirectory
+tdlm() {
+  [[ -z $1 ]] && { echo 'Usage: tdlm <ai_command> [<second_ai>]'; return 1; }
+  [[ -z $TMUX ]] && { echo "You must be inside tmux to use tdlm."; return 1; }
+
+  local ai="$1" ai2="$2"
+  local base_dir="$PWD"
+  local first=true
+
+  tmux rename-session "$(basename "$base_dir" | tr '.:' '--')"
+
+  for dir in "$base_dir"/*/; do
+    [[ -d $dir ]] || continue
+    local dirpath="${dir%/}"
+    if $first; then
+      tmux send-keys -t "$TMUX_PANE" "cd '$dirpath' && tdl $ai $ai2" C-m
+      first=false
+    else
+      local pane_id
+      pane_id=$(tmux new-window -c "$dirpath" -P -F '#{pane_id}')
+      tmux send-keys -t "$pane_id" "tdl $ai $ai2" C-m
+    fi
+  done
+}
+
+# tsl — Tmux Swarm Layout: same command started in N panes side by side
+tsl() {
+  [[ -z $1 || -z $2 ]] && { echo 'Usage: tsl <pane_count> <command>'; return 1; }
+  [[ -z $TMUX ]] && { echo "You must be inside tmux to use tsl."; return 1; }
+
+  local count="$1" cmd="$2"
+  local current_dir="$PWD"
+  local -a panes
+
+  tmux rename-window -t "$TMUX_PANE" "$(basename "$current_dir")"
+  panes+=("$TMUX_PANE")
+
+  while (( ${#panes[@]} < count )); do
+    local new_pane
+    new_pane=$(tmux split-window -h -t "${panes[-1]}" -c "$current_dir" -P -F '#{pane_id}')
+    panes+=("$new_pane")
+    tmux select-layout -t "${panes[0]}" tiled
+  done
+
+  for pane in "${panes[@]}"; do
+    tmux send-keys -t "$pane" "$cmd" C-m
+  done
+
+  tmux select-pane -t "${panes[0]}"
+}
 
 # ── macOS-specific ───────────────────────────────────────────────
 

@@ -27,6 +27,10 @@ elif command -v vim  &>/dev/null; then export EDITOR=vim  VISUAL=vim
 else                                    export EDITOR=vi   VISUAL=vi
 fi
 
+# Keep sudo-driven edits aligned with the same editor choice.
+export SUDO_EDITOR="$EDITOR"
+export SUDO_ASKPASS="$HOME/.local/bin/sudo-askpass"
+
 # ── XDG base directories ─────────────────────────────────────────
 # Many tools respect these (bat, starship, lazygit, etc.).
 # Setting them explicitly ensures consistent paths across systems.
@@ -65,5 +69,12 @@ fi
 
 # Antigravity (if installed)
 [[ -d "$HOME/.antigravity/antigravity/bin" ]] && path=("$HOME/.antigravity/antigravity/bin" $path)
+
+# Omarchy tools (if installed)
+export OMARCHY_PATH="$HOME/.local/share/omarchy"
+[[ -d "$OMARCHY_PATH/bin" ]] && path=("$OMARCHY_PATH/bin" $path)
+
+# Load extra local environment exported by bootstrap/install scripts.
+[[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
 
 export PATH

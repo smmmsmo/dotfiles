@@ -51,6 +51,7 @@ setopt glob_dots             # include dotfiles in glob matches
 #   $ export API_KEY=sk-12345   <- saved to history (bad)
 #   $  export API_KEY=sk-12345  <- NOT saved (note the leading space)
 setopt hist_expire_dups_first  # expire duplicates first when trimming
+setopt extended_history        # save timestamp and duration with each entry
 setopt hist_ignore_all_dups    # remove older duplicate when new one added
 setopt hist_ignore_space       # commands starting with space are not saved
 setopt hist_find_no_dups       # don't show duplicates when searching

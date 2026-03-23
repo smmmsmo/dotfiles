@@ -1,6 +1,11 @@
 add_newline = true
-command_timeout = 200
-format = "[$directory$git_branch$git_status]($style)$character"
+command_timeout = 750
+format = "[$directory$git_branch$git_state$git_status]($style)$character"
+
+# Optional: enable `hostname` in `format` when you want machine context,
+# especially useful while SSHing or working across multiple computers.
+# Example:
+# format = "[$hostname$directory$git_branch$git_state$git_status]($style)$character"
 
 [character]
 error_symbol = "[✗](bold cyan)"
@@ -8,13 +13,24 @@ success_symbol = "[❯](bold cyan)"
 
 [directory]
 truncation_length = 2
-truncation_symbol = "…/"
+truncation_symbol = ".../"
 repo_root_style = "bold cyan"
 repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+
+# Optional hostname module. Uncomment this block and the alternate `format`
+# line above if you want the current machine shown in your prompt.
+# [hostname]
+# ssh_only = false
+# format = "[@$hostname]($style) "
+# style = "dim cyan"
 
 [git_branch]
 format = "[$branch]($style) "
 style = "italic cyan"
+
+[git_state]
+format = '([$state( $progress_current/$progress_total)]($style) )'
+style = "bold cyan"
 
 [git_status]
 format     = '[$all_status]($style)'
@@ -27,6 +43,6 @@ up_to_date = " "
 untracked  = "? "
 modified   = " "
 stashed    = ""
-staged     = ""
-renamed    = ""
-deleted    = ""
+staged     = "+${count} "
+renamed    = "» "
+deleted    = "✘ "

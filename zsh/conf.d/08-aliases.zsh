@@ -88,6 +88,11 @@ command -v procs &>/dev/null && alias psa='procs'
 alias j='cd'       # works because zoxide replaces cd
 alias ji='cdi'     # interactive zoxide (fzf-powered directory picker)
 
+# Legacy shortcuts kept because they are still useful.
+alias c='opencode'
+alias cx='printf "\033[2J\033[3J\033[H" && claude --allow-dangerously-skip-permissions'
+alias r='rails'
+
 # ══════════════════════════════════════════════════════════════════
 # Git Aliases
 # ══════════════════════════════════════════════════════════════════
@@ -100,11 +105,11 @@ alias ji='cdi'     # interactive zoxide (fzf-powered directory picker)
 #   gc  = git commit
 #   gd  = git diff
 #   gl  = git log
-#   gp  = git pull
+#   gpu = git pull
 #   gps = git push
 #
 # Some notable choices:
-#   - `gp` uses --rebase --autostash (cleaner history, auto-stashes dirty work)
+#   - `gpu` uses --rebase --autostash (cleaner history, auto-stashes dirty work)
 #   - `gpf` uses --force-with-lease (safer than --force, prevents overwriting
 #     someone else's work)
 #   - `gwip` creates a timestamped WIP commit for quick saves
@@ -121,7 +126,7 @@ alias gd='git diff'
 alias gds='git diff --staged'
 alias gl='git log --oneline --decorate --graph --all'
 alias gll='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
-alias gp='git pull --rebase --autostash'
+alias gpu='git pull --rebase --autostash'
 alias gps='git push'
 alias gpf='git push --force-with-lease'   # safer than --force
 alias gco='git checkout'
@@ -167,6 +172,7 @@ alias ta='tmux new-session -A -s'    # attach or create: ta work
 alias td='tmux detach'
 alias tks='tmux kill-session -t'     # kill one: tks work
 alias tka='tmux kill-server'         # kill everything
+alias tw='tmux attach || tmux new -s Work'
 alias tmuxrc='${EDITOR} ~/.config/tmux/tmux.conf'
 
 # ══════════════════════════════════════════════════════════════════
@@ -212,6 +218,7 @@ alias ghosttyrc='${EDITOR} ~/.config/ghostty/config'
 alias starshiprc='${EDITOR} ~/.config/starship.toml'
 alias dot='cd ~/GITHUB/dotfiles'
 alias hosts='sudo ${EDITOR} /etc/hosts'
+alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
 
 # ── Network ──────────────────────────────────────────────────────
 alias ip='curl -s https://ipinfo.io/ip'
