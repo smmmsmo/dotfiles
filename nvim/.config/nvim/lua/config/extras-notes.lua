@@ -1,0 +1,11 @@
+-- Notes about extras and conditional loading.
+--
+-- The Go extra remains listed in `lazyvim.json` on purpose so the config stays
+-- explicit and visible. The actual guard lives in `lua/plugins/lang/go.lua`.
+--
+-- Behavior:
+-- - if `go` exists in PATH, the Go-specific plugins/config load normally
+-- - if `go` is missing, that file returns `{}` immediately and skips the setup
+--
+-- This keeps the intent visible without breaking startup on machines that do
+-- not have the Go toolchain installed.

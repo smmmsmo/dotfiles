@@ -14,6 +14,16 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+if _G.Snacks == nil then
+  _G.Snacks = {
+    keymap = {
+      set = function(mode, lhs, rhs, opts)
+        vim.keymap.set(mode, lhs, rhs, opts)
+      end,
+    },
+  }
+end
+
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins

@@ -352,6 +352,9 @@ Space m r
 # Preview in browser
 Space m p
 
+# Preview in terminal with Glow
+Space m g
+
 # Open in Typora
 Space m o
 ```

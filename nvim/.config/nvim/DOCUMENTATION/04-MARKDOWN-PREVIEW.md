@@ -6,11 +6,12 @@
 
 ## 📖 Overview
 
-This configuration provides **three professional ways** to read and edit Markdown files:
+This configuration provides **four professional ways** to read and edit Markdown files:
 
 1. **render-markdown.nvim** - GitHub-style rendering directly in Neovim (⭐ Recommended)
 2. **markdown-preview.nvim** - Live preview in your web browser
-3. **Typora Integration** - Open files in Typora WYSIWYG editor
+3. **Glow** - Quick terminal preview for local files and SSH workflows
+4. **Typora Integration** - Open files in Typora WYSIWYG editor
 
 **You can use all three depending on your needs!**
 
@@ -24,6 +25,7 @@ This configuration provides **three professional ways** to read and edit Markdow
 **Plugins Installed:**
 - `MeanderingProgrammer/render-markdown.nvim`
 - `iamcco/markdown-preview.nvim`
+- `glow` keybinding support
 - Typora integration keybindings
 
 ---
@@ -43,6 +45,11 @@ This configuration provides **three professional ways** to read and edit Markdow
 | `<leader>mp` | Start markdown preview in browser |
 | `<leader>ms` | Stop markdown preview |
 | `<leader>mt` | Toggle markdown preview |
+
+### Terminal Preview (Glow)
+| Key | Action |
+|-----|--------|
+| `<leader>mg` | Preview current markdown file with `glow` |
 
 ### Typora Integration
 | Key | Action |
@@ -141,7 +148,27 @@ Space + m + t
 
 ---
 
-### Method 3: Typora (WYSIWYG Editor)
+### Method 3: Glow (Terminal Preview)
+
+**Best for:** SSH sessions, quick terminal-only preview, lightweight reading
+
+**How to use:**
+```bash
+# Open markdown file in Neovim
+nvim report.md
+
+# Preview with Glow
+Space + m + g
+```
+
+**Notes:**
+- Requires `glow` to be installed and in your `PATH`
+- Saves the current file before launching preview
+- Great when you want a terminal-native preview instead of a browser
+
+---
+
+### Method 4: Typora (WYSIWYG Editor)
 
 **Best for:** Complex documents, non-developer edits, visual editing
 
@@ -495,6 +522,7 @@ Space + m + o    # Let them edit in Typora
 
 - **render-markdown.nvim:** https://github.com/MeanderingProgrammer/render-markdown.nvim
 - **markdown-preview.nvim:** https://github.com/iamcco/markdown-preview.nvim
+- **Glow:** https://github.com/charmbracelet/glow
 - **Typora:** https://typora.io
 - **GitHub Markdown Guide:** https://guides.github.com/features/mastering-markdown/
 

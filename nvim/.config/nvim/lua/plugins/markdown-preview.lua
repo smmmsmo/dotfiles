@@ -30,7 +30,9 @@ return {
       -- This makes markdown look beautiful directly in Neovim!
       
       -- Heading styles (like GitHub)
-      headings = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+      heading = {
+        icons = { '󰲡 ', '󰲣 ', '󰲥 ', '󰲧 ', '󰲩 ', '󰲫 ' },
+      },
       
       -- Code block rendering
       code = {
@@ -45,12 +47,14 @@ return {
       
       -- Checkbox rendering (like GitHub tasks)
       checkbox = {
-        unchecked = '󰄱 ',
-        checked = '󰱒 ',
+        unchecked = { icon = '󰄱 ' },
+        checked = { icon = '󰱒 ' },
       },
       
       -- Bullet point styles
-      bullet = '●',
+      bullet = {
+        icons = { '●', '○', '◆', '◇' },
+      },
       
       -- Table border rendering
       pipe_table = {
@@ -58,7 +62,9 @@ return {
       },
       
       -- Quote block rendering
-      quote = '▋',
+      quote = {
+        icon = '▋',
+      },
     },
     
     config = function(_, opts)
@@ -77,11 +83,18 @@ return {
   -- ==========================================================================
   {
     "iamcco/markdown-preview.nvim",
-    ft = { "markdown" }, -- Only load for markdown files
-    build = function() 
-      vim.fn["mkdp#util#install"]() 
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function()
+      if vim.fn.executable("node") == 1 then
+        vim.fn["mkdp#util#install"]()
+      end
     end,
-    
+    keys = {
+      { "<leader>mp", "<cmd>MarkdownPreview<cr>", desc = "Markdown Preview (Browser)" },
+      { "<leader>ms", "<cmd>MarkdownPreviewStop<cr>", desc = "Stop Markdown Preview" },
+      { "<leader>mt", "<cmd>MarkdownPreviewToggle<cr>", desc = "Toggle Markdown Preview" },
+    },
     config = function()
       -- Browser preview settings
       vim.g.mkdp_auto_start = 0  -- Don't auto-open preview
@@ -94,22 +107,6 @@ return {
       vim.g.mkdp_markdown_css = ''
       vim.g.mkdp_highlight_css = ''
       vim.g.mkdp_theme = 'dark'  -- or 'light'
-      
-      -- Keybindings for browser preview
-      vim.keymap.set('n', '<leader>mp', ':MarkdownPreview<CR>', {
-        desc = "Markdown Preview (Browser)",
-        silent = true
-      })
-      
-      vim.keymap.set('n', '<leader>ms', ':MarkdownPreviewStop<CR>', {
-        desc = "Stop Markdown Preview",
-        silent = true
-      })
-      
-      vim.keymap.set('n', '<leader>mt', ':MarkdownPreviewToggle<CR>', {
-        desc = "Toggle Markdown Preview",
-        silent = true
-      })
     end,
   },
 
@@ -119,16 +116,51 @@ return {
   {
     "LazyVim/LazyVim",
     opts = function()
+      local function open_markdown_external(file, missing_file_message)
+        if vim.fn.filereadable(file) ~= 1 then
+          vim.notify(missing_file_message, vim.log.levels.WARN)
+          return
+        end
+
+        if vim.fn.executable('typora') == 1 then
+          vim.fn.jobstart({ 'typora', file }, { detach = true })
+          vim.notify('Opened in Typora: ' .. vim.fn.fnamemodify(file, ':t'), vim.log.levels.INFO)
+          return
+        end
+
+        if vim.fn.executable('glow') == 1 then
+          vim.cmd('write')
+          vim.fn.jobstart({ 'glow', file }, { detach = true })
+          vim.notify('Typora not found, opened with Glow instead: ' .. vim.fn.fnamemodify(file, ':t'), vim.log.levels.WARN)
+          return
+        end
+
+        vim.notify('Typora is not installed. Install `typora` for GUI preview or `glow` for terminal preview.', vim.log.levels.WARN)
+      end
+
+      vim.keymap.set('n', '<leader>mg', function()
+        if vim.fn.executable('glow') ~= 1 then
+          vim.notify('glow is not installed', vim.log.levels.WARN)
+          return
+        end
+
+        local file = vim.fn.expand('%:p')
+        if vim.bo.filetype ~= 'markdown' or vim.fn.filereadable(file) ~= 1 then
+          vim.notify('Open a markdown file first', vim.log.levels.WARN)
+          return
+        end
+
+        vim.cmd('write')
+        vim.fn.jobstart({ 'glow', file }, { detach = true })
+      end, {
+        desc = 'Preview with Glow',
+        silent = true,
+      })
+
       -- Keybinding to open current markdown file in Typora
       vim.keymap.set('n', '<leader>mo', function()
         local file = vim.fn.expand('%:p')
-        if vim.fn.filereadable(file) == 1 then
-          -- Open file in Typora (detached process, won't block Neovim)
-          vim.fn.jobstart({ 'typora', file }, { detach = true })
-          vim.notify('Opened in Typora: ' .. vim.fn.expand('%:t'), vim.log.levels.INFO)
-        else
-          vim.notify('Current buffer is not a file', vim.log.levels.WARN)
-        end
+        open_markdown_external(file, 'Current buffer is not a file')
       end, {
         desc = "Open in Typora",
         silent = true
@@ -137,12 +169,7 @@ return {
       -- Open markdown file under cursor in Typora
       vim.keymap.set('n', '<leader>mO', function()
         local file = vim.fn.expand('<cfile>')
-        if vim.fn.filereadable(file) == 1 then
-          vim.fn.jobstart({ 'typora', file }, { detach = true })
-          vim.notify('Opened in Typora: ' .. file, vim.log.levels.INFO)
-        else
-          vim.notify('File not found: ' .. file, vim.log.levels.WARN)
-        end
+        open_markdown_external(file, 'File not found: ' .. file)
       end, {
         desc = "Open File Under Cursor in Typora",
         silent = true

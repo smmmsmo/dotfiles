@@ -4,6 +4,10 @@
 -- Uses gopls for LSP, delve for debugging
 -- Includes testing, coverage, and struct tag generation
 
+if vim.fn.executable("go") ~= 1 then
+  return {}
+end
+
 return {
   -- Go LSP enhancements
   {

@@ -110,6 +110,7 @@ When you see `<leader>`, press the Space key.
 | `<leader>mp` | Start markdown preview (browser) |
 | `<leader>ms` | Stop markdown preview |
 | `<leader>mt` | Toggle markdown preview |
+| `<leader>mg` | Preview current file with `glow` |
 | `<leader>mo` | Open current file in Typora |
 
 ### Formatting (Visual Mode)

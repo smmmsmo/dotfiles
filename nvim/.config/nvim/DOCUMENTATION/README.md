@@ -76,6 +76,7 @@ With the markdown plugins configured, these docs will render beautifully!
 **Keybindings for reading:**
 - `Space + m + r` - Toggle markdown rendering
 - `Space + m + p` - Preview in browser
+- `Space + m + g` - Preview with Glow in terminal
 - `Space + m + o` - Open in Typora
 
 ### Reading in Browser:
