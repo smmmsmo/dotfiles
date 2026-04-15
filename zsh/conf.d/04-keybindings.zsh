@@ -35,6 +35,10 @@ bindkey -e   # emacs mode
 # If the command line is empty, make Tab complete local files/directories
 # instead of listing every command on PATH. Otherwise keep normal zsh
 # completion behavior.
+# Tab completion widget is defined and bound in 06-plugins.zsh
+# AFTER fzf loads (fzf 05-fzf.zsh steals Tab with fzf-completion).
+# The widget MUST be registered before fzf loads so fzf can save
+# it as fzf_default_completion, but the bindkey must come after.
 zle -C complete-local-files complete-word _files
 _tab_complete_smart() {
   if [[ -z $BUFFER ]]; then
@@ -44,7 +48,6 @@ _tab_complete_smart() {
   fi
 }
 zle -N _tab_complete_smart
-bindkey '^I' _tab_complete_smart
 
 # ── Word navigation ──────────────────────────────────────────────
 # Ctrl+Arrow keys (terminal-dependent escape codes)

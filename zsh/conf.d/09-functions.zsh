@@ -221,47 +221,56 @@ json() {
 # Usage: cheat python/list
 cheat() { curl -s "cheat.sh/$1" | ${PAGER:-less} }
 
-# iso2sd — write an ISO image to an SD card / USB drive
-iso2sd() {
-  if (( $# < 1 )); then
-    echo 'Usage: iso2sd <input_file> [output_device]'
-    echo "Example: iso2sd ~/Downloads/ubuntu.iso /dev/sda"
-    return 1
-  fi
-  local iso="$1" drive="$2"
-  if [[ -z $drive ]]; then
-    local available_sds
-    available_sds=$(lsblk -dpno NAME | grep -E '/dev/sd')
-    [[ -z $available_sds ]] && { echo "No SD drives found"; return 1; }
-    drive=$(omarchy-drive-select "$available_sds")
-    [[ -z $drive ]] && { echo "No drive selected"; return 1; }
-  fi
-  sudo dd bs=4M status=progress oflag=sync if="$iso" of="$drive"
-  sudo eject "$drive"
-}
+if [[ $_os == linux ]] \
+  && command -v lsblk &>/dev/null \
+  && command -v omarchy-drive-select &>/dev/null \
+  && command -v wipefs &>/dev/null \
+  && command -v parted &>/dev/null \
+  && command -v partprobe &>/dev/null \
+  && command -v udevadm &>/dev/null \
+  && command -v mkfs.exfat &>/dev/null; then
+  # iso2sd — write an ISO image to an SD card / USB drive
+  iso2sd() {
+    if (( $# < 1 )); then
+      echo 'Usage: iso2sd <input_file> [output_device]'
+      echo "Example: iso2sd ~/Downloads/ubuntu.iso /dev/sda"
+      return 1
+    fi
+    local iso="$1" drive="$2"
+    if [[ -z $drive ]]; then
+      local available_sds
+      available_sds=$(lsblk -dpno NAME | grep -E '/dev/sd')
+      [[ -z $available_sds ]] && { echo "No SD drives found"; return 1; }
+      drive=$(omarchy-drive-select "$available_sds")
+      [[ -z $drive ]] && { echo "No drive selected"; return 1; }
+    fi
+    sudo dd bs=4M status=progress oflag=sync if="$iso" of="$drive"
+    sudo eject "$drive"
+  }
 
-# format-drive — wipe and format an entire drive as exFAT
-format-drive() {
-  if (( $# != 2 )); then
-    echo 'Usage: format-drive <device> <name>'
-    echo "Example: format-drive /dev/sda 'My Stuff'"
-    return 1
-  fi
-  echo "WARNING: This will completely erase all data on $1 and label it '$2'."
-  read -rq "confirm?Are you sure? (y/N): "
-  echo
-  [[ $confirm =~ ^[Yy]$ ]] || return 1
-  sudo wipefs -a "$1"
-  sudo dd if=/dev/zero of="$1" bs=1M count=100 status=progress
-  sudo parted -s "$1" mklabel gpt
-  sudo parted -s "$1" mkpart primary 1MiB 100%
-  sudo parted -s "$1" set 1 msftdata on
-  local partition="$([[ $1 == *nvme* ]] && echo "${1}p1" || echo "${1}1")"
-  sudo partprobe "$1" || true
-  sudo udevadm settle || true
-  sudo mkfs.exfat -n "$2" "$partition"
-  echo "Drive $1 formatted as exFAT and labeled '$2'."
-}
+  # format-drive — wipe and format an entire drive as exFAT
+  format-drive() {
+    if (( $# != 2 )); then
+      echo 'Usage: format-drive <device> <name>'
+      echo "Example: format-drive /dev/sda 'My Stuff'"
+      return 1
+    fi
+    echo "WARNING: This will completely erase all data on $1 and label it '$2'."
+    read -rq "confirm?Are you sure? (y/N): "
+    echo
+    [[ $confirm =~ ^[Yy]$ ]] || return 1
+    sudo wipefs -a "$1"
+    sudo dd if=/dev/zero of="$1" bs=1M count=100 status=progress
+    sudo parted -s "$1" mklabel gpt
+    sudo parted -s "$1" mkpart primary 1MiB 100%
+    sudo parted -s "$1" set 1 msftdata on
+    local partition="$([[ $1 == *nvme* ]] && echo "${1}p1" || echo "${1}1")"
+    sudo partprobe "$1" || true
+    sudo udevadm settle || true
+    sudo mkfs.exfat -n "$2" "$partition"
+    echo "Drive $1 formatted as exFAT and labeled '$2'."
+  }
+fi
 
 # fip — forward ports from a remote host to localhost
 fip() {
@@ -296,38 +305,40 @@ transcode-video-4K() {
   ffmpeg -i "$1" -c:v libx265 -preset slow -crf 24 -c:a aac -b:a 192k "${1%.*}-optimized.mp4"
 }
 
-# img2jpg — convert image to high-quality JPG
-img2jpg() {
-  local img="$1"
-  shift
-  magick "$img" "$@" -quality 95 -strip "${img%.*}-converted.jpg"
-}
+if command -v magick &>/dev/null; then
+  # img2jpg — convert image to high-quality JPG
+  img2jpg() {
+    local img="$1"
+    shift
+    magick "$img" "$@" -quality 95 -strip "${img%.*}-converted.jpg"
+  }
 
-# img2jpg-small — convert and resize to max 1080px width
-img2jpg-small() {
-  local img="$1"
-  shift
-  magick "$img" "$@" -resize 1080x\> -quality 95 -strip "${img%.*}-small.jpg"
-}
+  # img2jpg-small — convert and resize to max 1080px width
+  img2jpg-small() {
+    local img="$1"
+    shift
+    magick "$img" "$@" -resize 1080x\> -quality 95 -strip "${img%.*}-small.jpg"
+  }
 
-# img2jpg-medium — convert and resize to max 1800px width
-img2jpg-medium() {
-  local img="$1"
-  shift
-  magick "$img" "$@" -resize 1800x\> -quality 95 -strip "${img%.*}-medium.jpg"
-}
+  # img2jpg-medium — convert and resize to max 1800px width
+  img2jpg-medium() {
+    local img="$1"
+    shift
+    magick "$img" "$@" -resize 1800x\> -quality 95 -strip "${img%.*}-medium.jpg"
+  }
 
-# img2png — optimize PNG with maximum compression
-img2png() {
-  local img="$1"
-  shift
-  magick "$img" "$@" -strip \
-    -define png:compression-filter=5 \
-    -define png:compression-level=9 \
-    -define png:compression-strategy=1 \
-    -define png:exclude-chunk=all \
-    "${img%.*}-optimized.png"
-}
+  # img2png — optimize PNG with maximum compression
+  img2png() {
+    local img="$1"
+    shift
+    magick "$img" "$@" -strip \
+      -define png:compression-filter=5 \
+      -define png:compression-level=9 \
+      -define png:compression-strategy=1 \
+      -define png:exclude-chunk=all \
+      "${img%.*}-optimized.png"
+  }
+fi
 
 # gwa — create a new worktree + branch from current repo
 gwa() {

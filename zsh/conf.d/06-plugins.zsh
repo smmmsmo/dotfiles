@@ -97,3 +97,13 @@ if _source_first \
   HISTORY_SUBSTRING_SEARCH_FUZZY=1
   _bind_history_search
 fi
+
+# ── Restore Tab binding ────────────────────────────────────────────
+# fzf's shell integration (05-fzf.zsh) binds Tab to fzf-completion,
+# which overrides the custom _tab_complete_smart widget defined in
+# 04-keybindings.zsh.
+#
+# Rebind Tab AFTER fzf loads so fzf saves our widget as
+# fzf_default_completion and calls it from within fzf-completion.
+# This way Tab works normally AND fzf '**' completion still works.
+bindkey '^I' _tab_complete_smart

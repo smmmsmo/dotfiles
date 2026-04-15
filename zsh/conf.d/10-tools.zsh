@@ -45,6 +45,3 @@ fi
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
-
-# Startup directory: open new shells in ~/GITHUB when available.
-cd ~/GITHUB 2>/dev/null || true

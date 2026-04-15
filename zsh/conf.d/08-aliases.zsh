@@ -85,8 +85,10 @@ command -v procs &>/dev/null && alias psa='procs'
 # zoxide shorthands — j/ji as shorter alternatives to cd/cdi
 # zoxide is initialized in 10-tools.zsh and replaces cd.
 # `j` is a common convention from autojump/z/fasd.
-alias j='cd'       # works because zoxide replaces cd
-alias ji='cdi'     # interactive zoxide (fzf-powered directory picker)
+if command -v zoxide &>/dev/null; then
+  alias j='cd'       # works because zoxide replaces cd
+  alias ji='cdi'     # interactive zoxide (fzf-powered directory picker)
+fi
 
 # Legacy shortcuts kept because they are still useful.
 alias c='opencode'
@@ -150,16 +152,18 @@ alias gwip='git add -A && git commit -m "WIP: $(date +%H:%M)"'
 # ══════════════════════════════════════════════════════════════════
 # Short aliases for docker and docker compose. `dkps` formats
 # output as a clean table showing only name, status, and ports.
-alias dk='docker'
-alias dkc='docker compose'
-alias dkcu='docker compose up -d'
-alias dkcd='docker compose down'
-alias dkps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
-alias dkpsa='docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
-alias dkim='docker images'
-alias dkrm='docker rm'
-alias dkrmi='docker rmi'
-alias dkprune='docker system prune -af --volumes'
+if command -v docker &>/dev/null; then
+  alias dk='docker'
+  alias dkc='docker compose'
+  alias dkcu='docker compose up -d'
+  alias dkcd='docker compose down'
+  alias dkps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+  alias dkpsa='docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+  alias dkim='docker images'
+  alias dkrm='docker rm'
+  alias dkrmi='docker rmi'
+  alias dkprune='docker system prune -af --volumes'
+fi
 
 # ══════════════════════════════════════════════════════════════════
 # Tmux Aliases
