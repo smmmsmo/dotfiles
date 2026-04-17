@@ -23,7 +23,11 @@ if command -v eza &>/dev/null; then
   alias lta='eza --tree --level=2 --long --icons --git -a'
   alias l='eza -1 --group-directories-first'   # single-column quick list
 else
-  alias ls='ls --color=auto'
+  if [[ $_os == macos ]]; then
+    alias ls='ls -G'
+  else
+    alias ls='ls --color=auto'
+  fi
   alias ll='ls -lh'
   alias la='ls -lah'
   alias l='ls -CF'
@@ -123,7 +127,7 @@ fi
 # ══════════════════════════════════════════════════════════════════
 # Tmux
 # ══════════════════════════════════════════════════════════════════
-alias t='tmux ls 2>/dev/null || echo "no sessions"'
+alias t='tmux ls'
 alias ta='tmux new-session -A -s'
 alias td='tmux detach'
 alias tks='tmux kill-session -t'
@@ -180,7 +184,7 @@ else
 fi
 
 # ── Network ──────────────────────────────────────────────────────
-alias ip='curl -s https://ipinfo.io/ip'
+alias myip='curl -s https://ipinfo.io/ip'   # renamed from `ip` to avoid shadowing iproute2 on Linux
 alias ports='lsof -i -P -n | grep LISTEN'
 alias ping='ping -c 5'
 command -v wget &>/dev/null && alias wget='wget -c'

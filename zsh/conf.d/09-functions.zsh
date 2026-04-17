@@ -8,7 +8,7 @@
 n() { command nvim "${@:-.}" }
 
 # mkcd — mkdir + cd in one step
-mkcd() { mkdir -p -- "$1" && cd -- "$1" }
+mkcd() { command mkdir -p -- "$1" && cd -- "$1" }
 
 # compress / decompress
 compress()   { tar -czf "${1%/}.tar.gz" "${1%/}" }
@@ -47,7 +47,7 @@ up() {
 }
 
 # sizeof — human-readable size of a file or directory
-sizeof() { du -sh "${1:-.}" | cut -f1 }
+sizeof() { command du -sh "${1:-.}" | cut -f1 }
 
 # tre — tree view using eza
 tre() { eza --icons --tree --level="${1:-2}" "${@:2}" }
@@ -167,7 +167,7 @@ json() {
 }
 
 # cheat — quick cheat sheet from cheat.sh
-cheat() { curl -s "cheat.sh/$1" | ${PAGER:-less} }
+cheat() { curl -s "cheat.sh/$1" | ${=PAGER:-less} }
 
 # dotenv — load a .env file into the current shell
 dotenv() {

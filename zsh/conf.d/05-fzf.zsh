@@ -32,20 +32,25 @@ else
 fi
 
 # ── Appearance (Tokyo Night) ──────────────────────────────────────
+# Use --opt=value throughout; fzf's tokenizer handles this form
+# unambiguously across all versions (avoids space-separated parsing).
+# The clipboard bind uses --bind "key:action" because the action
+# contains spaces; inner double-quotes protect {} from being parsed
+# as closing the outer ${_fzf_clip:+...} expansion.
 export FZF_DEFAULT_OPTS="
   --height=50%
   --layout=reverse
   --border=rounded
   --info=inline
   --prompt='❯ '
-  --pointer='▶'
-  --marker='✓'
-  --bind 'ctrl-/:toggle-preview'
-  --bind 'ctrl-u:preview-half-page-up'
-  --bind 'ctrl-d:preview-half-page-down'
-  --bind 'ctrl-a:select-all'
+  --pointer=▶
+  --marker=✓
+  --bind=ctrl-/:toggle-preview
+  --bind=ctrl-u:preview-half-page-up
+  --bind=ctrl-d:preview-half-page-down
+  --bind=ctrl-a:select-all
   ${_fzf_clip:+--bind "ctrl-y:execute-silent(echo {+} | $_fzf_clip)"}
-  --bind '?:toggle-preview'
+  --bind=?:toggle-preview
   --color=bg+:#283457,bg:#1a1b26,spinner:#bb9af7,hl:#7aa2f7
   --color=fg:#c0caf5,header:#7aa2f7,info:#bb9af7,pointer:#7dcfff
   --color=marker:#9ece6a,fg+:#c0caf5,prompt:#bb9af7,hl+:#7aa2f7
@@ -54,15 +59,15 @@ export FZF_DEFAULT_OPTS="
 # ── Ctrl-T: file picker ───────────────────────────────────────────
 if command -v bat &>/dev/null; then
   export FZF_CTRL_T_OPTS="
-    --preview 'bat --color=always --line-range :200 {}'
-    --preview-window 'right:55%:wrap'"
+    --preview='bat --color=always --line-range :200 {}'
+    --preview-window=right:55%:wrap"
 fi
 
 # ── Ctrl-R: history picker ────────────────────────────────────────
 # Show the full command in the preview window; sort by recency.
 export FZF_CTRL_R_OPTS="
-  --preview 'echo {}'
-  --preview-window 'down:3:wrap'
+  --preview='echo {}'
+  --preview-window=down:3:wrap
   ${_fzf_clip:+--bind "ctrl-y:execute-silent(echo -n {2..} | $_fzf_clip)+abort"}
   --sort
   --exact"
@@ -70,10 +75,10 @@ export FZF_CTRL_R_OPTS="
 # ── Alt-C: directory picker ───────────────────────────────────────
 if command -v eza &>/dev/null; then
   export FZF_ALT_C_OPTS="
-    --preview 'eza --icons --tree --level=2 --color=always {}'
-    --preview-window 'right:45%'"
+    --preview='eza --icons --tree --level=2 --color=always {}'
+    --preview-window=right:45%"
 else
-  export FZF_ALT_C_OPTS="--preview 'ls -la {}'"
+  export FZF_ALT_C_OPTS="--preview='ls -la {}'"
 fi
 
 # ── Shell integration ─────────────────────────────────────────────

@@ -31,7 +31,7 @@ ZSH_CACHE_DIR="${XDG_CACHE_HOME}/zsh"
 mkdir -p "$ZSH_CACHE_DIR"
 
 if [[ -n "$ZSH_CACHE_DIR/zcompdump"(#qN.mh+24) ]]; then
-  compinit -d "$ZSH_CACHE_DIR/zcompdump"
+  compinit -i -d "$ZSH_CACHE_DIR/zcompdump"
 else
   compinit -C -d "$ZSH_CACHE_DIR/zcompdump"
 fi

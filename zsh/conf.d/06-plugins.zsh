@@ -5,9 +5,9 @@
 # Three plugins, sourced directly — no plugin manager needed.
 #
 # SOURCE ORDER IS MANDATORY:
-#   1. autosuggestions  — before syntax-highlighting
-#   2. syntax-highlighting — LAST plugin to touch ZLE (per its docs)
-#   3. history-substring-search — after syntax-highlighting
+#   1. autosuggestions         — before syntax-highlighting
+#   2. syntax-highlighting     — must come before history-substring-search
+#   3. history-substring-search — must be sourced last (per its docs)
 #
 # Install: brew install zsh-autosuggestions zsh-syntax-highlighting \
 #                       zsh-history-substring-search
