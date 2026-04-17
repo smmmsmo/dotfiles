@@ -35,7 +35,7 @@ That's it. Sessions start restoring automatically via tmux-continuum.
 | Key | Action |
 |-----|--------|
 | `Ctrl+Space` | Activate prefix (wait for next key) |
-| `prefix + r` | Reload config (live, no restart needed) |
+| `prefix + ,` | Reload config (live, no restart needed) |
 | `prefix + ?` | List every keybinding currently active |
 | `prefix + t` | Show a clock (press any key to close) |
 
@@ -50,7 +50,7 @@ Sessions are the top-level containers. Think of each session as a project or con
 | Key | Action |
 |-----|--------|
 | `prefix + s` | Open session/window tree picker (with preview) |
-| `prefix + $` | Rename current session |
+| `prefix + R` | Rename current session |
 | `Alt+Up` | Switch to previous session (no prefix needed) |
 | `Alt+Down` | Switch to next session (no prefix needed) |
 | `prefix + d` | Detach from tmux (leaves everything running) |
@@ -77,7 +77,7 @@ Windows are tabs within a session. Each window can have multiple panes.
 | Key | Action |
 |-----|--------|
 | `prefix + c` | New window (opens in current directory) |
-| `prefix + ,` | Rename current window |
+| `prefix + r` | Rename current window |
 | `prefix + Tab` | Toggle to last used window |
 | `Alt+]` | Next window (no prefix) |
 | `Alt+[` | Previous window (no prefix) |
@@ -85,7 +85,7 @@ Windows are tabs within a session. Each window can have multiple panes.
 | `prefix + p` | Previous window (with repeat) |
 | `Alt+1` … `Alt+9` | Jump directly to window 1–9 (no prefix) |
 
-> **Tip:** `Alt+1..9` is the fastest way to switch windows. Rename your windows (`prefix + ,`) so the tabs are meaningful.
+> **Tip:** `Alt+1..9` is the fastest way to switch windows. Rename your windows (`prefix + r`) so the tabs are meaningful.
 
 ---
 
