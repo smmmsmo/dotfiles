@@ -174,7 +174,7 @@ alias reload='source ~/.zshrc && echo "✓ zshrc reloaded"'
 alias zshrc='${EDITOR} ~/.zshrc'
 alias nvimrc='${EDITOR} ~/.config/nvim'
 alias ghosttyrc='${EDITOR} ~/.config/ghostty/config'
-alias starshiprc='${EDITOR} ~/.config/starship.toml'
+alias starshiprc='${EDITOR} ~/GITHUB/dotfiles/starship/.config/starship.toml'
 alias dot='cd ~/GITHUB/dotfiles'
 alias hosts='sudo ${EDITOR} /etc/hosts'
 if command -v bat &>/dev/null; then

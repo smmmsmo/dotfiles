@@ -33,7 +33,8 @@ fi
 # Install: brew install thefuck
 if command -v thefuck &>/dev/null; then
   eval "$(thefuck --alias)"
-  bindkey '^F' _run_thefuck 2>/dev/null || true
+  # Don't rebind ^F — it's already used for autosuggest-accept (06-plugins.zsh).
+  # Use the `fuck` command directly or bind to a free key like ^[^f (Alt-F).
 fi
 
 # ── atuin — shell history sync (optional) ────────────────────────
@@ -48,6 +49,7 @@ fi
 # Updates the terminal/tab title to show the current directory
 # (works in most xterm-compatible terminals and iTerm2).
 _set_terminal_title() {
+  [[ -t 1 ]] || return   # skip when stdout is not a tty (e.g. zsh -ic 'cmd')
   local title="${PWD/#$HOME/~}"
   print -Pn "\e]0;${title}\a"
 }

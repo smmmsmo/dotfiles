@@ -2,8 +2,10 @@
 # Prompt — Starship
 # ══════════════════════════════════════════════════════════════════
 #
-# Configured via ~/.config/starship.toml.
-# Falls back to a minimal vcs_info prompt when starship is absent
+# Configured via ~/.config/starship.toml, which should be symlinked to
+# the tracked file in ~/GITHUB/dotfiles/starship/.config/starship.toml.
+#
+# If Starship is absent we fall back to a minimal vcs_info prompt
 # (useful on remote servers / fresh installs).
 #
 # Install: brew install starship   or   curl -sS https://starship.rs/install.sh | sh

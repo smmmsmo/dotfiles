@@ -129,8 +129,7 @@ Configured in `conf.d/08-aliases.zsh`.
 | `ll`   | Long listing with git status                  |
 | `la`   | Long listing including hidden files           |
 | `lt`   | Tree view, 2 levels deep                      |
-| `ltt`  | Tree view, 3 levels deep                      |
-| `lttt` | Tree view, 4 levels deep                      |
+| `lta`  | Tree view, 2 levels deep (include hidden)     |
 
 ### File Viewing (bat)
 
@@ -144,8 +143,7 @@ Configured in `conf.d/08-aliases.zsh`.
 
 | Alias   | Tool       | What it does                                |
 |---------|------------|---------------------------------------------|
-| `grep`  | `rg`       | ripgrep — fast grep, respects .gitignore    |
-| `rgs`   | `rg`       | ripgrep including hidden files              |
+| `rgs`   | `rg`       | ripgrep including hidden/ignored files      |
 | `lg`    | `lazygit`  | Interactive git TUI                         |
 | `top`   | `btop`     | Modern system monitor                       |
 | `usage` | `dust`     | Visual disk usage analyzer                  |
@@ -167,7 +165,7 @@ Configured in `conf.d/08-aliases.zsh`.
 | `gds`    | `git diff --staged`               |                                    |
 | `gl`     | `git log --oneline --graph --all` | Compact log with branch graph      |
 | `gll`    | `git log --graph --pretty=...`    | Detailed log with colors           |
-| `gp`     | `git pull --rebase --autostash`   | Clean pull: rebases and stashes    |
+| `gpu`    | `git pull --rebase --autostash`   | Clean pull: rebases and stashes    |
 | `gps`    | `git push`                        |                                    |
 | `gpf`    | `git push --force-with-lease`     | Safe force push                    |
 | `gco`    | `git checkout`                    |                                    |
@@ -230,13 +228,12 @@ Configured in `conf.d/08-aliases.zsh`.
 | `cp`    | `cp -iv`    | Interactive + verbose (bypass with `\cp`)   |
 | `mv`    | `mv -iv`    | Interactive + verbose (bypass with `\mv`)   |
 | `rm`    | `rm -iv`    | Interactive + verbose (bypass with `\rm`)   |
-| `mkdirp`| `mkdir -p`  | Create parent directories                   |
 
 ### Misc
 
 | Alias        | What it does                              |
 |--------------|-------------------------------------------|
-| `df`         | `df -h` (human-readable disk free)        |
+| `df`         | `duf` if installed, else plain `df`       |
 | `du`         | `du -sh` (human-readable disk usage)      |
 | `path`       | Pretty-print PATH (one entry per line)    |
 | `reload`     | Re-source .zshrc                          |
