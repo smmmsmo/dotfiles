@@ -173,7 +173,11 @@ alias ghosttyrc='${EDITOR} ~/.config/ghostty/config'
 alias starshiprc='${EDITOR} ~/.config/starship.toml'
 alias dot='cd ~/GITHUB/dotfiles'
 alias hosts='sudo ${EDITOR} /etc/hosts'
-alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
+if command -v bat &>/dev/null; then
+  alias ff="fzf --preview 'bat --style=numbers --color=always {}'"
+else
+  alias ff="fzf --preview 'cat {}'"
+fi
 
 # ── Network ──────────────────────────────────────────────────────
 alias ip='curl -s https://ipinfo.io/ip'

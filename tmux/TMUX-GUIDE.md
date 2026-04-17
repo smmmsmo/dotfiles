@@ -41,6 +41,8 @@ That's it. Sessions start restoring automatically via tmux-continuum.
 
 When you press `Ctrl+Space` the left status badge turns **red** and shows `PREFIX` — confirming tmux is waiting for your next key.
 
+> **zsh autosuggestion note:** Because `Ctrl+Space` is the tmux prefix, zsh's `autosuggest-accept` binding on `Ctrl+Space` is unreachable inside tmux. Use **`Ctrl+F`** instead — it is bound to `autosuggest-accept` specifically for this reason. `Ctrl+Space` still works outside tmux.
+
 ---
 
 ## Sessions
@@ -343,7 +345,9 @@ sudo pacman -S xclip      # Arch
 ```
 
 **Inline images not showing (Ghostty)**
-The config has `allow-passthrough all` (global, covers all panes). If images still don't show, check that your image.nvim or similar plugin is configured for the correct protocol (ghostty or kitty). Requires tmux 3.3+.
+The config has `allow-passthrough on` (active pane only). If images still don't show, check that your image.nvim or similar plugin is configured for the correct protocol (ghostty or kitty). Requires tmux 3.3+.
+
+> **Security note:** `allow-passthrough on` limits escape-sequence passthrough to the active pane only. The more permissive `all` (every pane) is intentionally avoided — when SSH'd into untrusted hosts, `all` lets remote programs send escape sequences directly to your outer terminal.
 
 **Plugins not loading**
 TPM auto-bootstraps but you still need to install plugins once:

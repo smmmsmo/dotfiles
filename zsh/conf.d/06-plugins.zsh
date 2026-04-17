@@ -31,8 +31,11 @@ then
   ZSH_AUTOSUGGEST_USE_ASYNC=true
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#565f89,underline"
   # Accept full suggestion
-  bindkey '^ '  autosuggest-accept   # Ctrl-Space
-  bindkey '^]'  autosuggest-accept   # fallback
+  # Ctrl-Space is consumed by tmux as its prefix key, so Ctrl-f is the
+  # primary binding inside tmux. Ctrl-] and Ctrl-Space work outside tmux.
+  bindkey '^f'  autosuggest-accept   # Ctrl-f  (works inside tmux)
+  bindkey '^]'  autosuggest-accept   # Ctrl-]
+  bindkey '^ '  autosuggest-accept   # Ctrl-Space (outside tmux only)
   # Accept one word at a time (Alt-Right / Alt-L)
   bindkey '^[l' forward-word         # Alt-l — step through suggestion word by word
 fi

@@ -13,7 +13,10 @@ export _os
 
 # ── Locale ────────────────────────────────────────────────────────
 export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
+# LC_ALL overrides every locale category — only force it on macOS where
+# en_US.UTF-8 is always present. On Linux/containers the locale may not
+# be generated, causing noisy setlocale warnings on every shell start.
+[[ $_os == macos ]] && export LC_ALL="en_US.UTF-8"
 
 # ── Editor ────────────────────────────────────────────────────────
 if   command -v nvim &>/dev/null; then export EDITOR=nvim VISUAL=nvim

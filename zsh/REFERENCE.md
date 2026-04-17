@@ -58,7 +58,7 @@ Configured in `conf.d/02-options.zsh`.
 | `hist_save_no_dups`     | Don't write duplicates to the history file                 |
 | `hist_verify`           | Show recalled command before executing (edit first)        |
 | `append_history`        | Append to history file, don't overwrite                    |
-| `share_history`         | Share history across all terminal sessions in real time    |
+| `share_history`         | Share history across all sessions in real time; also handles incremental appending — `inc_append_history` is intentionally not set alongside it to avoid duplicate/disordered history |
 
 ### Safety & Misc
 
@@ -89,8 +89,9 @@ Configured in `conf.d/04-keybindings.zsh`. Uses emacs mode (`bindkey -e`).
 | `Home`           | Beginning of line                     |
 | `End`            | End of line                           |
 | `Ctrl-X Ctrl-E`  | Open current command in $EDITOR       |
-| `Ctrl-Space`     | Accept autosuggestion                 |
-| `Ctrl-]`         | Accept autosuggestion (fallback)      |
+| `Ctrl-F`         | Accept autosuggestion (primary — works inside tmux) |
+| `Ctrl-]`         | Accept autosuggestion (alternative)   |
+| `Ctrl-Space`     | Accept autosuggestion (outside tmux only — tmux intercepts this as its prefix) |
 | `Up Arrow`       | History substring search up           |
 | `Down Arrow`     | History substring search down         |
 | `Ctrl-P`         | History substring search up           |
@@ -307,7 +308,7 @@ Configured in `conf.d/06-plugins.zsh`. No plugin manager used — sourced direct
 
 | Plugin                         | Purpose                            | Accept key        |
 |--------------------------------|------------------------------------|--------------------|
-| `zsh-autosuggestions`          | Ghost text from history/completion | `Ctrl-Space`       |
+| `zsh-autosuggestions`          | Ghost text from history/completion | `Ctrl-F` (inside tmux), `Ctrl-Space` (outside tmux) |
 | `zsh-syntax-highlighting`     | Fish-like syntax coloring          | (automatic)        |
 | `zsh-history-substring-search`| Up/Down to search history by substring | `Up`/`Down` arrow |
 | `zsh-completions`             | Extra completions for ~300 commands | (via tab)          |
@@ -354,6 +355,7 @@ Configured in `conf.d/05-fzf.zsh`.
 | `Ctrl-T`    | Insert file path                          | bat (syntax highlight)|
 | `Ctrl-R`    | Search command history                    | —                     |
 | `Alt-C`     | cd into directory                         | eza tree              |
+| `Ctrl-Y`    | Copy selection to clipboard               | macOS: `pbcopy`; Linux: `xclip`/`xsel` (skipped if none found) |
 | `Ctrl-/`    | Toggle preview pane                       | —                     |
 | `Ctrl-U`    | Scroll preview up                         | —                     |
 | `Ctrl-D`    | Scroll preview down                       | —                     |
@@ -381,6 +383,29 @@ it's a conscious decision.
 | `zsh-vi-mode`            | Would change the emacs-mode workflow. Major habit change, not an improvement. |
 | `auto_param_slash`       | Already enabled by default in zsh. Setting it explicitly is redundant.        |
 | Modular XDG ZDOTDIR      | Would require a .zshenv file and changing how zsh finds its config. More complexity than the conf.d approach. |
+
+---
+
+## Cross-Platform Notes
+
+### Locale (`LC_ALL`)
+`LANG=en_US.UTF-8` is set unconditionally. `LC_ALL` is only forced on macOS,
+where the locale is always present. On Linux, containers, and remote hosts,
+`LC_ALL` is left unset so the system locale takes effect — avoids `setlocale`
+warnings when `en_US.UTF-8` isn't generated.
+
+### fzf clipboard (`Ctrl-Y`)
+The `Ctrl-Y` copy binding auto-detects the clipboard tool at shell startup:
+- **macOS** → `pbcopy`
+- **Linux with xclip** → `xclip -selection clipboard`
+- **Linux with xsel** → `xsel --clipboard --input`
+- **Neither found** → binding is omitted (no silent failure)
+
+Install on Linux: `sudo apt install xclip` or `sudo pacman -S xclip`.
+
+### `fcd` and `ff` fallbacks
+`fcd` uses `fd` when available, otherwise falls back to `find`.
+`ff` uses `bat` for the preview when available, otherwise falls back to `cat`.
 
 ---
 

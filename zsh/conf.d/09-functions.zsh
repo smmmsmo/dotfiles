@@ -69,7 +69,13 @@ fcd() {
   else
     preview='ls -la {}'
   fi
-  dir=$(fd --type d --hidden --exclude .git 2>/dev/null \
+  local _find_cmd
+  if command -v fd &>/dev/null; then
+    _find_cmd='fd --type d --hidden --exclude .git'
+  else
+    _find_cmd='find . -type d -not -path "*/.git/*"'
+  fi
+  dir=$(eval "$_find_cmd" 2>/dev/null \
         | fzf --preview "$preview" --prompt '❯ ') && cd "$dir"
 }
 

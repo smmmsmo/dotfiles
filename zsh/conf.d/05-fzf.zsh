@@ -11,6 +11,17 @@
 
 command -v fzf &>/dev/null || return
 
+# ── Clipboard command (cross-platform) ───────────────────────────
+if [[ $_os == macos ]]; then
+  _fzf_clip='pbcopy'
+elif command -v xclip &>/dev/null; then
+  _fzf_clip='xclip -selection clipboard'
+elif command -v xsel &>/dev/null; then
+  _fzf_clip='xsel --clipboard --input'
+else
+  _fzf_clip=''
+fi
+
 # ── Backend ──────────────────────────────────────────────────────
 if command -v fd &>/dev/null; then
   export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -33,7 +44,7 @@ export FZF_DEFAULT_OPTS="
   --bind 'ctrl-u:preview-half-page-up'
   --bind 'ctrl-d:preview-half-page-down'
   --bind 'ctrl-a:select-all'
-  --bind 'ctrl-y:execute-silent(echo {+} | pbcopy)'
+  ${_fzf_clip:+--bind "ctrl-y:execute-silent(echo {+} | $_fzf_clip)"}
   --bind '?:toggle-preview'
   --color=bg+:#283457,bg:#1a1b26,spinner:#bb9af7,hl:#7aa2f7
   --color=fg:#c0caf5,header:#7aa2f7,info:#bb9af7,pointer:#7dcfff
@@ -52,7 +63,7 @@ fi
 export FZF_CTRL_R_OPTS="
   --preview 'echo {}'
   --preview-window 'down:3:wrap'
-  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  ${_fzf_clip:+--bind "ctrl-y:execute-silent(echo -n {2..} | $_fzf_clip)+abort"}
   --sort
   --exact"
 

@@ -33,7 +33,9 @@ setopt hist_save_no_dups       # don't write duplicates to file
 setopt hist_verify             # show recalled command before executing
 setopt append_history          # append, don't overwrite
 setopt share_history           # share across all sessions in real time
-setopt inc_append_history      # write entries as they are typed
+# inc_append_history is intentionally omitted: share_history already
+# writes entries incrementally. Enabling both causes confusing ordering
+# and duplicate-looking history across concurrent shells.
 
 # ── Miscellaneous ────────────────────────────────────────────────
 setopt interactive_comments  # allow # comments in interactive shell
