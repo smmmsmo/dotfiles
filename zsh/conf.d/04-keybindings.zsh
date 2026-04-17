@@ -2,43 +2,18 @@
 # Key Bindings
 # ══════════════════════════════════════════════════════════════════
 #
-# Uses emacs mode (bindkey -e), which is the default for most
-# terminals. This gives you familiar shortcuts:
-#   Ctrl-A / Ctrl-E  -> beginning / end of line
-#   Ctrl-W           -> delete word backward
-#   Ctrl-R           -> reverse history search (overridden by fzf)
-#   Ctrl-X Ctrl-E    -> open current command in $EDITOR
+# Emacs mode: Ctrl-A/E (line nav), Ctrl-W (word delete),
+# Ctrl-R (history), Ctrl-X Ctrl-E (edit in $EDITOR).
 #
-# If you prefer vim-style modal editing, change to `bindkey -v`
-# and consider the zsh-vi-mode plugin for better vim emulation.
-#
-# Terminal escape codes vary by terminal emulator. The codes below
-# work in Ghostty, iTerm2, Alacritty, and most modern terminals.
-# If a binding doesn't work, use `cat -v` then press the key
-# to see what escape code your terminal sends.
-#
-# ── Quick Reference ──────────────────────────────────────────────
-#   Ctrl-A         beginning of line
-#   Ctrl-E         end of line
-#   Ctrl-W         delete word backward
-#   Alt-D          delete word forward
-#   Alt-F / Alt-B  word forward / backward
-#   Ctrl-X Ctrl-E  edit command in $EDITOR
-#   Ctrl-Space     accept autosuggestion
-#   Up / Down      history substring search
-#   Ctrl-P / N     history substring search (alternative)
-#   Ctrl-/         toggle fzf preview
-# ══════════════════════════════════════════════════════════════════
+# To discover escape codes for a key: press Ctrl-V then the key,
+# or run `cat -v` and press it.
 
 bindkey -e   # emacs mode
 
-# If the command line is empty, make Tab complete local files/directories
-# instead of listing every command on PATH. Otherwise keep normal zsh
-# completion behavior.
-# Tab completion widget is defined and bound in 06-plugins.zsh
-# AFTER fzf loads (fzf 05-fzf.zsh steals Tab with fzf-completion).
-# The widget MUST be registered before fzf loads so fzf can save
-# it as fzf_default_completion, but the bindkey must come after.
+# ── Tab: smart completion ─────────────────────────────────────────
+# Empty buffer → complete local files; otherwise → normal completion.
+# Registered here so fzf (05-fzf.zsh) can save it as
+# fzf_default_completion. Re-bound after fzf in 06-plugins.zsh.
 zle -C complete-local-files complete-word _files
 _tab_complete_smart() {
   if [[ -z $BUFFER ]]; then
@@ -50,37 +25,64 @@ _tab_complete_smart() {
 zle -N _tab_complete_smart
 
 # ── Word navigation ──────────────────────────────────────────────
-# Ctrl+Arrow keys (terminal-dependent escape codes)
-bindkey '^[[1;5C' forward-word     # Ctrl-Right
-bindkey '^[[1;5D' backward-word    # Ctrl-Left
-# Alt+F / Alt+B (standard emacs word movement)
-bindkey '^[f'     forward-word
-bindkey '^[b'     backward-word
+bindkey '^[[1;5C' forward-word       # Ctrl-Right
+bindkey '^[[1;5D' backward-word      # Ctrl-Left
+bindkey '^[f'     forward-word       # Alt-F
+bindkey '^[b'     backward-word      # Alt-B
 
 # ── Home / End ───────────────────────────────────────────────────
-bindkey '^[[H'  beginning-of-line  # Home key
-bindkey '^[[F'  end-of-line        # End key
-bindkey '^A'    beginning-of-line  # Ctrl-A
-bindkey '^E'    end-of-line        # Ctrl-E
+bindkey '^[[H'    beginning-of-line  # Home
+bindkey '^[[F'    end-of-line        # End
+bindkey '^A'      beginning-of-line  # Ctrl-A
+bindkey '^E'      end-of-line        # Ctrl-E
 
-# ── Delete word ──────────────────────────────────────────────────
-bindkey '^W'    backward-kill-word # Ctrl-W (delete word left)
-bindkey '^[d'   kill-word          # Alt-D  (delete word right)
+# ── Delete ───────────────────────────────────────────────────────
+bindkey '^W'      backward-kill-word # Ctrl-W  — delete word left
+bindkey '^[d'     kill-word          # Alt-D   — delete word right
+bindkey '^[[3~'   delete-char        # Delete key (forward-delete)
+bindkey '^H'      backward-delete-char # Backspace in some terminals
+
+# ── Copy / paste helpers ─────────────────────────────────────────
+# Ctrl-Y yank (paste), Ctrl-K kill to end of line
+bindkey '^K'      kill-line
+bindkey '^Y'      yank
+
+# ── Undo / redo ──────────────────────────────────────────────────
+bindkey '^_'      undo               # Ctrl-/  (undo)
+bindkey '^[^_'    redo               # Alt-Ctrl-/ (redo)
 
 # ── Edit command in $EDITOR ──────────────────────────────────────
-# Press Ctrl-X Ctrl-E to open the current command line in your
-# editor. Useful for writing complex multi-line commands.
 autoload -Uz edit-command-line
 zle -N edit-command-line
-bindkey '^X^E' edit-command-line
+bindkey '^X^E' edit-command-line    # Ctrl-X Ctrl-E
+
+# ── Push line (park current command, run another, restore) ───────
+# Ctrl-Q parks the current command, lets you run something else,
+# then the parked command comes back automatically.
+bindkey '^Q' push-line-or-edit
+
+# ── Surround / quote current word ────────────────────────────────
+# Alt-' wraps the current word in single quotes.
+autoload -Uz modify-current-argument
+_single_quote_word() { modify-current-argument "'${ARG//\'/\\'\\''}'"; }
+_double_quote_word() { modify-current-argument "\"${ARG}\""; }
+zle -N _single_quote_word
+zle -N _double_quote_word
+bindkey "^['" _single_quote_word    # Alt-'  — single-quote word
+bindkey '^["' _double_quote_word    # Alt-"  — double-quote word
+
+# ── Paste URL safely ─────────────────────────────────────────────
+# Escapes special chars when pasting a URL into the command line.
+autoload -Uz bracketed-paste-magic url-quote-magic
+zle -N bracketed-paste bracketed-paste-magic
+zle -N self-insert url-quote-magic
 
 # ── History substring search bindings ────────────────────────────
-# These are defined as a function and called AFTER the
-# history-substring-search plugin is sourced in 06-plugins.zsh,
-# because the widget must exist before we can bind to it.
+# Called from 06-plugins.zsh AFTER the plugin is sourced,
+# because the widget must exist before we bind to it.
 _bind_history_search() {
-  bindkey '^[[A' history-substring-search-up    # Up arrow
-  bindkey '^[[B' history-substring-search-down  # Down arrow
+  bindkey '^[[A' history-substring-search-up    # Up
+  bindkey '^[[B' history-substring-search-down  # Down
   bindkey '^P'   history-substring-search-up    # Ctrl-P
   bindkey '^N'   history-substring-search-down  # Ctrl-N
 }

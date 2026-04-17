@@ -1,48 +1,34 @@
 # ══════════════════════════════════════════════════════════════════
 # Environment Variables
 # ══════════════════════════════════════════════════════════════════
-#
-# Sets up the core environment that every other module depends on:
-#   - Locale (ensures consistent UTF-8 everywhere)
-#   - EDITOR/VISUAL (used by git commit, Ctrl-X Ctrl-E, etc.)
-#   - XDG base directories (standardizes where apps store config/cache/data)
-#   - PAGER (bat with fallback to less — used by man, git, etc.)
-#   - PATH (deduplicated, with Homebrew on macOS)
-#
-# This file is sourced FIRST because other modules reference these
-# variables (e.g., completion uses XDG_CACHE_HOME, fzf uses bat).
-# ══════════════════════════════════════════════════════════════════
+
+# ── OS detection ──────────────────────────────────────────────────
+# _os is referenced throughout all modules — set it first.
+case "$OSTYPE" in
+  darwin*)  _os=macos ;;
+  linux*)   _os=linux ;;
+  *)        _os=other ;;
+esac
+export _os
 
 # ── Locale ────────────────────────────────────────────────────────
-# Force UTF-8 everywhere. Without this, tools may mishandle
-# unicode filenames, emoji in git commits, or non-ASCII output.
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 # ── Editor ────────────────────────────────────────────────────────
-# Prefer nvim > vim > vi. VISUAL is used by readline (Ctrl-X Ctrl-E),
-# EDITOR is used by git, crontab, etc. Set both to the same value.
 if   command -v nvim &>/dev/null; then export EDITOR=nvim VISUAL=nvim
 elif command -v vim  &>/dev/null; then export EDITOR=vim  VISUAL=vim
 else                                    export EDITOR=vi   VISUAL=vi
 fi
-
-# Keep sudo-driven edits aligned with the same editor choice.
 export SUDO_EDITOR="$EDITOR"
-export SUDO_ASKPASS="$HOME/.local/bin/sudo-askpass"
 
 # ── XDG base directories ─────────────────────────────────────────
-# Many tools respect these (bat, starship, lazygit, etc.).
-# Setting them explicitly ensures consistent paths across systems.
-# See: https://specifications.freedesktop.org/basedir-spec
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
 
 # ── Pager ─────────────────────────────────────────────────────────
-# bat provides syntax highlighting and line numbers for paging.
-# BAT_THEME is set to match the Tokyo Night color scheme used
-# across fzf, delta, and the terminal.
 if command -v bat &>/dev/null; then
   export PAGER="bat --paging=always"
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
@@ -50,11 +36,19 @@ if command -v bat &>/dev/null; then
 else
   export PAGER="less -RFX"
   export MANPAGER="less -RFX"
+  export LESS="-FRX"
 fi
 
+# ── less colors (when bat is unavailable) ────────────────────────
+export LESS_TERMCAP_mb=$'\e[1;32m'
+export LESS_TERMCAP_md=$'\e[1;32m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_se=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[01;33m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[1;4;31m'
+
 # ── PATH ──────────────────────────────────────────────────────────
-# typeset -U ensures no duplicate entries in PATH, even after
-# sourcing .zshrc multiple times (e.g., `reload` alias).
 typeset -U path PATH
 path=(
   "$HOME/bin"
@@ -62,19 +56,10 @@ path=(
   $path
 )
 
-# macOS: Homebrew lives in /opt/homebrew on Apple Silicon
 if [[ $_os == macos ]] && [[ -d /opt/homebrew ]]; then
   path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
+  # Homebrew-installed man pages
+  export MANPATH="/opt/homebrew/share/man:$MANPATH"
 fi
-
-# Antigravity (if installed)
-[[ -d "$HOME/.antigravity/antigravity/bin" ]] && path=("$HOME/.antigravity/antigravity/bin" $path)
-
-# Omarchy tools (if installed)
-export OMARCHY_PATH="$HOME/.local/share/omarchy"
-[[ -d "$OMARCHY_PATH/bin" ]] && path=("$OMARCHY_PATH/bin" $path)
-
-# Load extra local environment exported by bootstrap/install scripts.
-[[ -f "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
 
 export PATH
