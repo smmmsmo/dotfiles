@@ -60,3 +60,6 @@ WORDCHARS="${WORDCHARS//\/}"
 # Also exclude = and : so Ctrl-W stops at env var assignments and URLs
 WORDCHARS="${WORDCHARS//=/}"
 WORDCHARS="${WORDCHARS//:/}"
+
+# Report timing for commands that take longer than 10 seconds
+REPORTTIME=10

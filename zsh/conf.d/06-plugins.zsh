@@ -28,7 +28,6 @@ if _source_first \
 then
   ZSH_AUTOSUGGEST_STRATEGY=(history completion)
   ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40
-  ZSH_AUTOSUGGEST_USE_ASYNC=true
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#565f89,underline"
   # Accept full suggestion
   # Ctrl-Space is consumed by tmux as its prefix key, so Ctrl-f is the

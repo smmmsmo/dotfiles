@@ -158,6 +158,11 @@ alias activate='source .venv/bin/activate 2>/dev/null || source venv/bin/activat
 alias ipy='python3 -m IPython 2>/dev/null || python3'  # IPython with fallback
 
 # ══════════════════════════════════════════════════════════════════
+# Archive
+# ══════════════════════════════════════════════════════════════════
+alias decompress='tar -xzf'
+
+# ══════════════════════════════════════════════════════════════════
 # Safety & filesystem
 # ══════════════════════════════════════════════════════════════════
 alias mkdir='mkdir -pv'

@@ -6,7 +6,13 @@
 # _os is referenced throughout all modules — set it first.
 case "$OSTYPE" in
   darwin*)  _os=macos ;;
-  linux*)   _os=linux ;;
+  linux*)
+    if [[ -n "$WSL_DISTRO_NAME" || -f /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
+      _os=wsl
+    else
+      _os=linux
+    fi
+    ;;
   *)        _os=other ;;
 esac
 export _os

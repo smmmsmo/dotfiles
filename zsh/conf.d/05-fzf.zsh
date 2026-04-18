@@ -14,6 +14,8 @@ command -v fzf &>/dev/null || return
 # ── Clipboard command (cross-platform) ───────────────────────────
 if [[ $_os == macos ]]; then
   _fzf_clip='pbcopy'
+elif command -v wl-copy &>/dev/null; then
+  _fzf_clip='wl-copy'
 elif command -v xclip &>/dev/null; then
   _fzf_clip='xclip -selection clipboard'
 elif command -v xsel &>/dev/null; then
@@ -64,13 +66,13 @@ if command -v bat &>/dev/null; then
 fi
 
 # ── Ctrl-R: history picker ────────────────────────────────────────
-# Show the full command in the preview window; sort by recency.
+# Show the full command in the preview window.
+# --sort is intentionally omitted: fzf defaults to chronological order for
+# history which is more useful. --exact is omitted: fuzzy is the whole point.
 export FZF_CTRL_R_OPTS="
   --preview='echo {}'
   --preview-window=down:3:wrap
-  ${_fzf_clip:+--bind "ctrl-y:execute-silent(echo -n {2..} | $_fzf_clip)+abort"}
-  --sort
-  --exact"
+  ${_fzf_clip:+--bind "ctrl-y:execute-silent(echo -n {2..} | $_fzf_clip)+abort"}"
 
 # ── Alt-C: directory picker ───────────────────────────────────────
 if command -v eza &>/dev/null; then

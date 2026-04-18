@@ -10,9 +10,8 @@ n() { command nvim "${@:-.}" }
 # mkcd — mkdir + cd in one step
 mkcd() { command mkdir -p -- "$1" && cd -- "$1" }
 
-# compress / decompress
-compress()   { tar -czf "${1%/}.tar.gz" "${1%/}" }
-alias decompress='tar -xzf'
+# compress — archive a file or directory as .tar.gz
+compress() { tar -czf "${1%/}.tar.gz" "${1%/}" }
 
 # extract — universal archive extractor
 extract() {
@@ -54,9 +53,6 @@ tre() { eza --icons --tree --level="${1:-2}" "${@:2}" }
 
 # port — show what's listening on a given port
 port() { lsof -i ":${1}" }
-
-# mcd — create and cd, then print absolute path
-mcd() { mkcd "$1" && pwd }
 
 # ── FZF tools ────────────────────────────────────────────────────
 # All require fzf.

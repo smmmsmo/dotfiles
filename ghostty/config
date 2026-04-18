@@ -1,0 +1,96 @@
+# ── Ghostty config — professional macOS setup ─────────────────────────
+# Run `ghostty +show-config --default --docs | less` to explore all options.
+
+# Theme
+theme = "Catppuccin Macchiato"
+
+# Typography
+font-family              = "CaskaydiaMono Nerd Font Mono"
+font-family              = "JetBrains Mono Nerd Font"   # fallback
+font-size                = 15
+font-thicken             = true
+font-thicken-strength    = 100
+font-feature             = calt                         # enable ligatures
+adjust-cell-height       = 5%
+adjust-underline-position = 1
+
+# Appearance
+background-opacity       = 0.96
+background-blur          = true
+selection-foreground     = #cad3f5
+selection-background     = #5b6078
+cursor-style             = block
+cursor-style-blink       = false
+cursor-color             = #8aadf4
+cursor-text              = #24273a
+mouse-hide-while-typing  = true
+link-url                 = true
+scrollbar                = system                       # native scrollbar (1.3+)
+unfocused-split-fill     = #1e2030
+unfocused-split-opacity  = 0.85                         # dim inactive splits
+
+# Clipboard
+clipboard-read                  = ask
+clipboard-write                 = allow
+clipboard-trim-trailing-spaces  = true
+clipboard-paste-protection      = true
+copy-on-select                  = clipboard
+right-click-action              = copy-or-paste
+
+# Scrollback
+scrollback-limit         = 10000000                    # ~10 MB per surface
+
+# Window
+window-width                    = 140
+window-height                   = 38
+window-padding-x                = 10
+window-padding-y                = 8
+window-padding-balance          = true
+window-padding-color            = background
+window-inherit-working-directory = true
+window-step-resize              = true
+window-save-state               = always
+window-colorspace               = display-p3
+resize-overlay                  = after-first
+resize-overlay-duration         = 1s
+confirm-close-surface           = true
+quit-after-last-window-closed   = false
+
+# Shell integration
+shell-integration         = zsh
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo,path
+
+# Quick terminal
+quick-terminal-position           = top
+quick-terminal-size               = 34%
+quick-terminal-screen             = main
+quick-terminal-animation-duration = 0.18
+quick-terminal-autohide           = true
+
+# macOS
+macos-titlebar-style          = transparent
+macos-option-as-alt           = left
+macos-window-shadow           = true
+macos-auto-secure-input       = true
+macos-secure-input-indication = true
+
+# Notifications (1.3+) — alert when long commands finish while unfocused
+command-notification-min-duration = 10s
+
+# Keybinds
+keybind = super+ctrl+space=toggle_quick_terminal
+keybind = super+shift+r=reload_config
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+keybind = super+shift+h=goto_split:left
+keybind = super+shift+l=goto_split:right
+keybind = super+shift+k=goto_split:up
+keybind = super+shift+j=goto_split:down
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1
+keybind = super+0=reset_font_size
+
+# Machine-local overrides (optional, not an error if missing)
+config-file = ?config.local

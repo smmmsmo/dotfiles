@@ -72,10 +72,11 @@ bindkey "^['" _single_quote_word    # Alt-'  — single-quote word
 bindkey '^["' _double_quote_word    # Alt-"  — double-quote word
 
 # ── Paste URL safely ─────────────────────────────────────────────
-# Escapes special chars when pasting a URL into the command line.
-autoload -Uz bracketed-paste-magic url-quote-magic
+# bracketed-paste-magic handles safe pasting of multi-line content.
+# url-quote-magic is intentionally NOT bound to self-insert — it causes
+# noticeable typing lag in modern terminals and conflicts with paste magic.
+autoload -Uz bracketed-paste-magic
 zle -N bracketed-paste bracketed-paste-magic
-zle -N self-insert url-quote-magic
 
 # ── History substring search bindings ────────────────────────────
 # Called from 06-plugins.zsh AFTER the plugin is sourced,
