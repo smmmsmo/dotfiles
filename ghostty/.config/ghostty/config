@@ -1,234 +1,63 @@
-# ======================================================================
-#  Ghostty Configuration
-#  Docs: https://ghostty.org/docs/config/reference
-# ======================================================================
+# Professional Ghostty setup for macOS with tmux-friendly defaults.
 
+theme = "Catppuccin Macchiato"
 
-# ----------------------------------------------------------------------
-#  THEME & APPEARANCE
-# ----------------------------------------------------------------------
+font-family = "CaskaydiaMono Nerd Font Mono"
+font-size = 15
+adjust-cell-height = 5%
+adjust-underline-position = 1
 
-# Color scheme applied to the terminal. Ghostty ships with many built-in
-# themes. Run `ghostty +list-themes` to browse them all.
-theme = "TokyoNight"
-
-# Slight transparency so your wallpaper bleeds through. 1.0 = fully
-# opaque, 0.0 = fully transparent. Values around 0.90-0.95 look great
-# without sacrificing readability.
-background-opacity = 0.95
-
-# Slightly blur whatever shows through the transparent background. This
-# usually looks cleaner than raw transparency, especially on macOS.
+background-opacity = 0.96
 background-blur = true
-
-# Apply the same background opacity to cells with explicit background
-# colors so full-screen apps like Neovim and tmux still feel translucent.
-background-opacity-cells = true
-
-# Padding (in pixels) between the terminal content and the window edge.
-# Gives the text some breathing room so it doesn't hug the borders.
-window-padding-x = 12
-window-padding-y = 10
-
-# When true, Ghostty distributes extra padding evenly on all sides so
-# the text stays centered after a window resize. Without this, content
-# sticks to the top-left and you get uneven gutters on the right/bottom.
-window-padding-balance = true
-
-# Show native window decorations (title bar, close/minimize buttons).
-window-decoration = true
-
-# Minimum contrast ratio between foreground and background colors.
-# Ghostty will automatically lighten or darken text that falls below
-# this threshold. 1.0 = off, 4.5 = WCAG AA standard. 1.5 is a gentle
-# bump that helps with very dim colors without washing out the palette.
-# minimum-contrast = 1.5
-
-# Hides the size overlay that appears in the center of the terminal
-# while you drag-resize the window. Set to "never" for a cleaner look.
-resize-overlay = never
-
-
-# ----------------------------------------------------------------------
-#  FONTS
-# ----------------------------------------------------------------------
-
-# The primary font family. Must be installed on your system. Nerd Font
-# variants include patched icons used by tools like starship, eza, etc.
-font-family = "Cascadia Cove Nerd Mono"
-font-size = 13
-
-# OpenType font features. Prefix with + to enable, - to disable.
-#   liga = standard ligatures   (e.g. -> becomes an arrow glyph)
-#   calt = contextual alternates (font-specific glyph substitutions)
-# Both are disabled here so code symbols render as-is — each character
-# stays visually distinct, which many developers prefer for readability.
-font-feature = -liga
-font-feature = -calt
-
-
-# ----------------------------------------------------------------------
-#  CURSOR
-# ----------------------------------------------------------------------
-
-# Cursor shape in the terminal: block, bar, or underline.
-# "bar" gives a thin vertical line like VS Code's default cursor.
-cursor-style = bar
-
-# Whether the cursor blinks. Disabled for a steady, distraction-free
-# editing experience.
+selection-foreground = #cad3f5
+selection-background = #5b6078
+cursor-style = block
 cursor-style-blink = false
-
-
-# ----------------------------------------------------------------------
-#  BEHAVIOR
-# ----------------------------------------------------------------------
-
-# Maximum bytes of scrollback history kept in memory per surface.
-# 50,000,000 = ~50 MB. Generous enough for long build logs or
-# streaming output. Lower this if you notice high memory usage.
-scrollback-limit = 50000000
-
-# Restore all open windows, tabs, and splits when Ghostty relaunches.
-# "always" = unconditional restore. Set to "never" to start fresh.
-window-save-state = always
-
-# Skip the "are you sure?" prompt when closing a terminal surface that
-# still has a running process. Useful if you close tabs/panes often.
-confirm-close-surface = false
-
-# When a program outputs bold text, also make it brighter. This gives
-# better visual contrast with themes like Tokyo Night that have
-# relatively subdued default colors.
-bold-is-bright = true
-
-# Hide the mouse cursor while you type. It reappears the moment you
-# move the mouse. Reduces visual clutter during keyboard-heavy work.
+cursor-color = #8aadf4
+cursor-text = #24273a
 mouse-hide-while-typing = true
+link-url = true
 
-# Auto-update channel. "stable" checks for new stable releases only.
-auto-update-channel = stable
-
-
-# ----------------------------------------------------------------------
-#  PLATFORM-SPECIFIC SETTINGS
-#
-#  These settings only apply to a specific operating system. Ghostty
-#  silently ignores settings that don't match the current OS, BUT
-#  having both active can make it confusing when debugging.
-#
-#  CONVENTION USED IN THIS FILE:
-#    #   = explanatory comment (documentation, notes, context)
-#    #!  = toggled-off setting (uncomment to activate on that platform)
-#
-#  When moving to a new machine:
-#    1. Uncomment (#! -> remove #!) the settings for your current OS
-#    2. Comment out (add #!) the settings for the other OS
-# ----------------------------------------------------------------------
-
-# -- macOS (active) --
-#  These are currently ENABLED. Comment them out with #! on Linux.
-
-# Title bar style: "transparent" blends the title bar into the terminal
-# background color instead of showing the default macOS gray system bar.
-# Other options: "native" (default macOS chrome), "hidden" (no bar at all).
-macos-titlebar-style = "transparent"
-
-# Treat the Option key as Alt. This is essential for terminal programs
-# that rely on Alt keybinds: Neovim (<A-j>), tmux (M- prefixed binds),
-# readline/bash (Meta key for word-jump, etc.).
-#
-# Trade-off: you lose macOS special character input via Option
-# (e.g. Option+3 = # on British keyboards, Option+e = accent marks).
-# If you need those characters, set this to false and use Esc as Alt
-# instead (most terminals treat Esc as a Meta/Alt prefix).
-macos-option-as-alt = true
-
-# -- Linux (inactive) --
-#  These are currently DISABLED. Remove the #! prefix to activate on Linux.
-
-# Client-side decorations on Wayland. When true, Ghostty draws its own
-# title bar instead of relying on the window manager/compositor.
-# Why you'd want this: some Wayland compositors (e.g. Sway, Hyprland)
-# don't draw server-side title bars at all, so without CSD you get no
-# title bar. Even on GNOME/KDE, CSD ensures a consistent Ghostty look.
-# On X11 this setting has no effect -- X11 always uses server-side decorations.
-#! linux-csd-titlebar = true
-
-
-# ----------------------------------------------------------------------
-#  CLIPBOARD
-# ----------------------------------------------------------------------
-
-# Automatically strip trailing whitespace from copied text. Prevents
-# pasting invisible spaces at the end of lines.
+clipboard-read = ask
+clipboard-write = allow
 clipboard-trim-trailing-spaces = true
-
-# Show a confirmation prompt when pasting text that contains potentially
-# dangerous characters (newlines, control chars). Protects against
-# accidentally executing pasted commands.
 clipboard-paste-protection = true
-
-# Automatically copy selected text to the system clipboard without
-# needing Ctrl+Shift+C. Just select with the mouse and it's copied.
-# Middle-click or Ctrl+Shift+V to paste.
 copy-on-select = clipboard
+right-click-action = copy-or-paste
 
+window-width = 140
+window-height = 38
+window-padding-x = 10
+window-padding-y = 8
+window-padding-balance = true
+window-padding-color = background
+window-inherit-working-directory = true
+window-step-resize = true
+window-save-state = always
+window-colorspace = display-p3
+resize-overlay = after-first
+resize-overlay-duration = 1s
+unfocused-split-fill = #1e2030
+confirm-close-surface = true
+quit-after-last-window-closed = false
 
-# ----------------------------------------------------------------------
-#  KEY BINDINGS (cross-platform: macOS, Linux, Windows)
-#
-#  Using ctrl+shift+ as the modifier so the same binds work on all
-#  three operating systems. On macOS, cmd+shift+ also works by default
-#  for most of these actions, so you get both.
-# ----------------------------------------------------------------------
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo,path
 
-# -- Window & Tab management --
-keybind = ctrl+shift+n=new_window
-keybind = ctrl+shift+w=close_window
-keybind = ctrl+shift+t=new_tab
-keybind = ctrl+shift+right=next_tab
-keybind = ctrl+shift+left=previous_tab
+quick-terminal-position = top
+quick-terminal-size = 34%
+quick-terminal-screen = main
+quick-terminal-animation-duration = 0.18
+quick-terminal-autohide = true
 
-# -- Splits --
-# Create a new split pane. Ghostty automatically picks horizontal or
-# vertical based on the current pane dimensions (wider = vertical
-# split, taller = horizontal split). Think of it as "smart split".
-keybind = ctrl+shift+enter=new_split:auto
+macos-titlebar-style = transparent
+macos-option-as-alt = left
+macos-window-shadow = true
+macos-auto-secure-input = true
+macos-secure-input-indication = true
 
-# Navigate between split panes using vim-style hjkl directions.
-# Much faster than clicking with the mouse.
-keybind = ctrl+shift+h=goto_split:left
-keybind = ctrl+shift+j=goto_split:bottom
-keybind = ctrl+shift+k=goto_split:top
-keybind = ctrl+shift+l=goto_split:right
+keybind = super+ctrl+space=toggle_quick_terminal
+keybind = super+shift+r=reload_config
 
-# Toggle zoom on the focused split pane. Zoomed = the pane fills the
-# entire window. Press again to restore the split layout. Great for
-# temporarily focusing on one pane without losing your split arrangement.
-keybind = ctrl+shift+z=toggle_split_zoom
-
-# Reload the Ghostty config file without restarting the application.
-# Useful when tweaking settings — just save the file and hit this.
-keybind = ctrl+shift+comma=reload_config
-
-
-# ----------------------------------------------------------------------
-#  SHELL INTEGRATION
-# ----------------------------------------------------------------------
-
-# "detect" lets Ghostty automatically detect your shell (zsh, bash,
-# fish) and inject its shell integration script. This enables features
-# like semantic prompts, clickable URLs, and cursor shape changes.
-shell-integration = detect
-
-# Allow clicking within shell prompts to move the cursor. Works best when
-# shell integration or OSC 133 prompt markers are active.
-cursor-click-to-move = true
-
-# Notify when long-running commands complete in an unfocused surface.
-notify-on-command-finish = unfocused
-notify-on-command-finish-action = notify
-
-# Keep a zoomed split zoomed while navigating between panes.
-split-preserve-zoom = navigation
+# Optional machine-local overrides.
+config-file = "?config.local"
