@@ -6,11 +6,9 @@ theme = "Catppuccin Macchiato"
 
 # Typography
 font-family              = "CaskaydiaMono Nerd Font Mono"
-font-family              = "JetBrains Mono Nerd Font"   # fallback
 font-size                = 15
 font-thicken             = true
 font-thicken-strength    = 100
-font-feature             = calt                         # enable ligatures
 adjust-cell-height       = 5%
 adjust-underline-position = 1
 
@@ -25,20 +23,22 @@ cursor-color             = #8aadf4
 cursor-text              = #24273a
 mouse-hide-while-typing  = true
 link-url                 = true
-scrollbar                = system                       # native scrollbar (1.3+)
+# native scrollbar (1.3+)
+scrollbar                = system
 unfocused-split-fill     = #1e2030
-unfocused-split-opacity  = 0.85                         # dim inactive splits
+# dim inactive splits
+unfocused-split-opacity  = 0.85
 
 # Clipboard
 clipboard-read                  = ask
 clipboard-write                 = allow
 clipboard-trim-trailing-spaces  = true
-clipboard-paste-protection      = true
 copy-on-select                  = clipboard
 right-click-action              = copy-or-paste
 
 # Scrollback
-scrollback-limit         = 10000000                    # ~10 MB per surface
+# ~10 MB per surface
+scrollback-limit         = 10000000
 
 # Window
 window-width                    = 140
@@ -55,17 +55,15 @@ resize-overlay                  = after-first
 resize-overlay-duration         = 1s
 confirm-close-surface           = true
 quit-after-last-window-closed   = false
+quit-after-last-window-closed-delay = 10s
 
 # Shell integration
 shell-integration         = zsh
 shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo,path
 
 # Quick terminal
-quick-terminal-position           = top
 quick-terminal-size               = 34%
-quick-terminal-screen             = main
 quick-terminal-animation-duration = 0.18
-quick-terminal-autohide           = true
 
 # macOS
 macos-titlebar-style          = transparent
@@ -73,24 +71,49 @@ macos-option-as-alt           = left
 macos-window-shadow           = true
 macos-auto-secure-input       = true
 macos-secure-input-indication = true
+macos-non-native-fullscreen   = visible-menu
 
-# Notifications (1.3+) — alert when long commands finish while unfocused
-command-notification-min-duration = 10s
+# Notifications — shell-integration posts OSC 9 on long-running command completion,
+# Ghostty forwards those to macOS Notification Center when unfocused.
+desktop-notifications        = true
 
 # Keybinds
 keybind = super+ctrl+space=toggle_quick_terminal
 keybind = super+shift+r=reload_config
+keybind = super+comma=open_config
+
+# Splits
 keybind = super+d=new_split:right
 keybind = super+shift+d=new_split:down
-keybind = super+t=new_tab
-keybind = super+w=close_surface
 keybind = super+shift+h=goto_split:left
 keybind = super+shift+l=goto_split:right
 keybind = super+shift+k=goto_split:up
 keybind = super+shift+j=goto_split:down
+keybind = super+shift+z=toggle_split_zoom
+
+# Tabs
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+keybind = super+shift+w=close_tab
+keybind = super+shift+bracket_right=next_tab
+keybind = super+shift+bracket_left=previous_tab
+keybind = super+1=goto_tab:1
+keybind = super+2=goto_tab:2
+keybind = super+3=goto_tab:3
+keybind = super+4=goto_tab:4
+keybind = super+5=goto_tab:5
+keybind = super+6=goto_tab:6
+keybind = super+7=goto_tab:7
+keybind = super+8=goto_tab:8
+keybind = super+9=goto_tab:9
+
+# Font size
 keybind = super+equal=increase_font_size:1
 keybind = super+minus=decrease_font_size:1
 keybind = super+0=reset_font_size
+
+# Misc
+keybind = super+k=clear_screen
 
 # Machine-local overrides (optional, not an error if missing)
 config-file = ?config.local
