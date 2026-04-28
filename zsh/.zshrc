@@ -28,14 +28,9 @@
 # ── Performance: skip global compinit (we run our own) ───────────
 skip_global_compinit=1
 
-# ── OS detection (available to all modules via $_os) ─────────────
-case "$(uname -s)" in
-  Darwin) _os=macos ;;
-  Linux)  _os=linux ;;
-  *)      _os=other ;;
-esac
-
 # ── Source all modules in order ──────────────────────────────────
+# 01-environment.zsh sets $_os (with WSL detection) before any other
+# module needs it.
 # Resolve the real path of ~/.zshrc (following symlinks) to find
 # conf.d/ relative to the actual file location in the dotfiles repo.
 # This works whether ~/.zshrc is a symlink or a real file.

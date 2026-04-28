@@ -1,0 +1,14 @@
+# Alacritty — Linux overlay (omarchy dynamic theme).
+# This file becomes ~/.config/alacritty/alacritty.toml via bootstrap.sh.
+
+[general]
+import = [
+  "~/GITHUB/dotfiles/alacritty/shared.toml",
+  "~/.config/omarchy/current/theme/alacritty.toml",
+]
+
+[font]
+size = 9
+
+[window]
+decorations = "None"
